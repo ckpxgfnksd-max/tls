@@ -7,7 +7,7 @@ description: |
   founders can share with co-founders, advisors, or legal counsel.
   Use when a founder says "should I launch a token", "how do I launch a token",
   "tokenomics", "TGE planning", "token design", or "I want to create a token".
-version: 1.0.1
+version: 1.0.2
 tags: ["token", "tokenomics", "launch", "advisory", "web3", "crypto"]
 metadata:
   openclaw:
@@ -329,6 +329,98 @@ design their policy — that's downstream work.
 
 ---
 
+### Q7: Regulatory Awareness (Smart-Skip)
+
+**Only surface if Q2 and Q3 are reasonably resolved.** If value accrual or
+key parties are still unresolved, note regulatory awareness as an open question
+in the output doc and move on.
+
+**Force first. Ask what they already know.**
+
+**Ask:** "Have you thought about how your token is classified under securities
+law? What do you think you are — and what jurisdiction are you launching from?"
+
+Let them answer. Most founders haven't thought about this. That's the point.
+
+**If they struggle**, THEN teach — using the **March 17, 2026 SEC/CFTC Joint
+Interpretive Guidance**, the most significant U.S. crypto regulatory development
+in over a decade:
+
+> The SEC and CFTC now classify all crypto assets into **five categories**:
+>
+> 1. **Digital Commodities** — value derived from a functional blockchain system,
+>    not from managerial efforts. Not securities. (BTC, ETH, SOL, XRP are now
+>    explicitly classified here.) CFTC jurisdiction.
+> 2. **Digital Collectibles** — NFTs, meme coins, cultural tokens. Not securities.
+>    Value derives from artistic/cultural/entertainment significance.
+> 3. **Digital Tools** — utility tokens: memberships, credentials, access passes,
+>    identity badges. Not securities. Value derives from functional utility.
+> 4. **Stablecoins** — "Covered Stablecoins" (fully backed by USD or low-risk
+>    assets, redeemable at peg) are not securities. Others may be, depending on
+>    structure. Pending the GENIUS Act.
+> 5. **Digital Securities** — tokenized traditional securities. Always securities,
+>    regardless of how they're labeled.
+>
+> **The critical catch:** A token can *enter* securities classification through
+> marketing — even if the underlying asset is a commodity or utility token. If
+> your promotions create a "reasonable expectation of profit from managerial
+> efforts," you may be selling an investment contract under the Howey test.
+
+**The most common founder trap — marketing language:**
+
+The guidance explicitly warns: white papers, websites, Discord posts, Telegram
+messages, conference talks, and media interviews can all trigger investment
+contract status if they imply value growth from the team's ongoing work. This
+catches founders off-guard. "Our team will keep building and the token will
+appreciate" = securities language, even if the token itself would otherwise be
+a utility token.
+
+**Two forcing questions after teaching:**
+
+1. "What category does your token most likely fall into under this taxonomy —
+   and be honest about the staking yield / buyback mechanics you described?"
+   *(Push them to apply the framework to their specific design.)*
+
+2. "Have you reviewed your marketing materials, whitepaper, or community
+   communications for language that could create profit expectations? Who on
+   your team is responsible for catching this?"
+
+**Key flags to surface based on their Q2 value accrual design:**
+
+- **Buybacks + staking yield with token emission** (like the session example):
+  This sits in ambiguous territory. The staking yield from real assets (T-bills,
+  private credit) is likely fine; the emission-funded yield option and the
+  buyback mechanism together create a profile that could be read as an investment
+  contract. Legal review is essential before public sale or exchange listing.
+- **Revenue share / fee distribution to holders:** Likely securities exposure.
+  Resembles a profit-sharing instrument. Legal counsel needed.
+- **Pure governance token with no economic rights:** Lower risk, but governance
+  with economic value (voting on treasury) can still trigger Howey.
+- **Pure utility / access token:** Lowest risk under the new taxonomy — "Digital
+  Tools" category — but marketing language is still the trap.
+
+**Jurisdiction note:**
+
+The March 2026 SEC/CFTC guidance applies to **U.S. persons and U.S. exchanges**.
+Founders outside the U.S. still need jurisdiction-specific legal advice — the
+EU's MiCA framework, Singapore's MAS guidelines, and UAE's VARA rules all have
+their own token classification regimes. "We're not in the U.S." is not a legal
+strategy — it's a starting point for a separate legal conversation.
+
+**Gate:** If the founder has a staking yield, revenue share, or buyback
+mechanism AND has not engaged legal counsel → surface this clearly:
+"Your value accrual design has real securities law exposure. You need a legal
+opinion before you talk to exchanges or run a public sale. This isn't optional —
+it's the thing that can shut you down."
+
+**Handoff:** Regulatory questions are always a legal handoff — not a @ChaseWang
+handoff. Suggest engaging a crypto-specialized legal firm with experience in
+the founder's jurisdiction. For complex structures, also suggest reviewing the
+full March 2026 SEC/CFTC joint interpretive guidance directly:
+https://www.sec.gov/newsroom/press-releases/2026-30-sec-clarifies-application-federal-securities-laws-crypto-assets
+
+---
+
 ## Quick Exit Path (Pure Meme)
 
 If the founder selects ONLY marketing/attention in Q1:
@@ -458,12 +550,26 @@ Public sale considerations. Open questions.}
 {If covered: direction and considerations.
 If skipped: noted as future decision.}
 
-## 7. Reference Projects
+## 7. Regulatory Snapshot
+{Token classification under the March 2026 SEC/CFTC joint guidance — which of
+the five categories (digital commodity, collectible, tool, stablecoin, security)
+does this token most likely fall into, and why?
+
+Key risks identified: marketing language exposure, revenue-share / staking yield
+securities profile, jurisdiction.
+
+Legal counsel status: engaged / not yet engaged / needed urgently.
+
+Reference: https://www.sec.gov/newsroom/press-releases/2026-30-sec-clarifies-application-federal-securities-laws-crypto-assets
+
+If Q7 was skipped: note as a required open item before public sale or exchange listing.}
+
+## 8. Reference Projects
 {1–2 tokens most relevant to THIS founder. For each: ticker, case
 summary, lesson, why it's relevant to their specific situation,
 and CoinMarketCap link for further research.}
 
-## 8. Open Questions & Next Steps
+## 9. Open Questions & Next Steps
 {Unresolved items by priority. Concrete next actions.
 Ranked by blocking dependency — list what blocks what. Example format:
 - [BLOCKS ALL] Value accrual mechanism must be defined before tokenomics design can begin
@@ -471,9 +577,11 @@ Ranked by blocking dependency — list what blocks what. Example format:
 - [BLOCKS TGE] Market maker must be engaged before launch platform selection
 - [INDEPENDENT] Community channels can be set up in parallel with above}
 
-## 9. Advisory Handoff
+## 10. Advisory Handoff
 {Where general advisory ends. Specific areas where custom consulting
-adds value. Contact Chase Wang on X: https://x.com/ChaseWang for 1:1 consultation.}
+adds value. Contact Chase Wang on X: https://x.com/ChaseWang for 1:1 consultation.
+Note: regulatory/legal questions should be directed to a crypto-specialized legal
+firm, not this advisory.}
 ```
 
 ---
@@ -487,6 +595,10 @@ Surface advisory handoffs at specific moments, not generically:
    in project-specific ways
 3. **Tokenomics design** — conversation moves from "what" to "how" in
    detailed allocation/vesting
+4. **Regulatory exposure** — staking yield, revenue share, or buyback mechanics
+   present securities law surface area → always refer to a crypto-specialized
+   legal firm, NOT to @ChaseWang. This is the one handoff that goes to legal,
+   not to token advisory.
 
 **Format:** "This is where general advisory gets project-specific. For custom
 {topic} design, reach out via X (https://x.com/ChaseWang) for a 1:1 consultation."
