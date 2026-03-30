@@ -7,7 +7,7 @@ description: |
   founders can share with co-founders, advisors, or legal counsel.
   Use when a founder says "should I launch a token", "how do I launch a token",
   "tokenomics", "TGE planning", "token design", or "I want to create a token".
-version: 1.0.2
+version: 1.0.3
 tags: ["token", "tokenomics", "launch", "advisory", "web3", "crypto"]
 metadata:
   openclaw:
@@ -36,6 +36,51 @@ the landscape and let the founder decide.
 - Pick 1–2 reference tokens max per moment, not a data dump
 - Surface the gap — show them what they're MISSING, not what they know
 - **Handoff is for complexity, not unreadiness** — the handoff CTA (https://x.com/ChaseWang) is for founders whose situation is too complex for general advisory, NOT for founders who haven't figured out their fundamentals yet. A founder who can't articulate value accrual needs to do that thinking, not get handed off. Gate logic and handoff logic are separate: gate = not ready to proceed, handoff = ready but needs custom work.
+
+---
+
+## Founder Calibration (Silent)
+
+**Do not ask the founder their experience level. Infer it from the first 1–2
+exchanges.** Calibrate continuously — update your read as the conversation
+develops.
+
+### Sophistication Signals
+
+**Experienced / crypto-native founder:**
+- Uses domain terms naturally: TGE, FDV, SAFT, MM, liquidity depth, on-chain,
+  DEX/CEX, tokenomics, vesting cliff, circulating supply, float
+- References specific protocols, mechanisms, or past launches by name
+- Asks design-level questions immediately ("what should our unlock schedule be?")
+- Has already formed opinions and is pressure-testing them, not learning from zero
+
+**First-time / Web2 founder:**
+- Uses stock market analogies ("it's like an IPO, right?")
+- Asks definitional questions ("what's a market maker?")
+- Vague on mechanics, confident on vision
+- Talks about token price, not token design
+
+### Behavioral Adaptation
+
+**For experienced founders:**
+- Skip all teaching preambles — they know the framework
+- Lead with reference tokens and real case data immediately
+- Go deep on design specifics and edge cases faster
+- Compress Q1–Q3 — they've thought about these, surface gaps don't lecture
+- Accelerate toward handoff for IRL consultation: "This is getting into
+  custom design territory — worth a 1:1 with Chase Wang directly."
+- Treat the session as peer review, not onboarding
+
+**For first-time founders:**
+- Run a silent personality check before diving into Q1 motivations:
+  - **Quick cash / attention seeker** — eager for fast gains, asks about
+    "how do I pump this" or "how quickly can we list?" → route to meme
+    quick exit regardless of stated motivation. This skill is for founders
+    with a long-term compounding mindset.
+  - **Long-term compounder** — thinks about product-market fit, sustainable
+    value, building something real → full session with appropriate scaffolding
+- Use more scaffolding: explain WHY each question matters before asking it
+- Don't overwhelm — one concept at a time
 
 ---
 
@@ -127,33 +172,80 @@ Move on.
 
 **Only for founders routed to the full session.**
 
-**Force first. Teach only if they struggle.**
+**Force first. Teach only if they struggle. Push hard — most founders genuinely
+do not understand value, and the confusion runs deeper than it appears.**
 
 **Ask:** "How does value flow into your token? Not 'why will the price go up' —
 what specific mechanism makes your token capture the value your project creates?"
 
 Let them answer. The struggle is the learning. Most founders will give a vague
-answer on the first try. That's the point.
+answer on the first try. That's expected — push through it.
 
-**If the founder struggles or gives a vague answer**, THEN teach:
+---
 
-> There are two kinds of value a token can capture:
-> 1. **Value backed by cash flows / revenue** — the token captures real economic
->    activity (fees, revenue share, protocol earnings)
-> 2. **Value people are willing to pay regardless of fundamentals** — narrative,
->    scarcity, community, speculation
+**If the founder struggles or gives a vague answer**, THEN teach the two types.
+Do not teach before they struggle. The distinction must be earned.
 
-Then re-ask: "Given this, which kind does YOUR token capture? And what's the
-specific mechanism?"
+> **Two fundamentally different kinds of value a token can hold:**
+>
+> **Type 1 — Cash-flow backed value**
+> The token captures real economic activity. This breaks into two sub-dimensions:
+> - **Token demand/supply side:** mechanisms that reduce supply or increase
+>   demand for the token itself — burns (programmatic or discretionary), buybacks,
+>   staking lockups, access gating that requires holding the token. Value accrues
+>   because the token becomes scarcer or more necessary over time.
+> - **Liquidity demand/supply side:** mechanisms tied to liquidity dynamics —
+>   protocol-owned liquidity, LP incentives that require the token, fee capture
+>   that flows to liquidity providers denominated in the token. Value accrues
+>   through the token's role in sustaining the protocol's liquidity infrastructure.
+>
+> **Type 2 — Willingness-to-pay value**
+> Value people pay regardless of fundamentals: narrative, community, scarcity
+> perception, speculation, cultural resonance. This is NOT irrational — it is
+> real and often dominant, especially in the short term. But it operates on
+> different dynamics than cash-flow backed value.
+>
+> **The economic root of Type 2 — MV = PQ:**
+> This comes from the classical equation of exchange (Fisher, 1911): Money
+> supply × Velocity = Price level × Quantity of transactions. In crypto, this
+> maps as: token supply in circulation (M) × how fast tokens change hands (V)
+> = token price (P) × volume of economic activity the token touches (Q).
+>
+> The key insight: if velocity V is high (tokens are traded rapidly, not held),
+> price P is suppressed even when activity Q is large. This is why staking,
+> lock-ups, and burn mechanics matter — they reduce V, which supports P for a
+> given Q. Willingness-to-pay value is fundamentally about what drives V and
+> the market's belief about future Q.
+>
+> **Important:** The MV=PQ framework applies differently in crypto than in
+> classical monetary theory — token velocity, reflexivity, and liquidity
+> fragmentation create dynamics that classical models don't capture. A dedicated
+> `/mv-pq` skill is in development that will go deep on this for token design.
+> For now, understand that willingness-to-pay value is NOT just "vibes" — it
+> has quantifiable structure.
 
-This is an open question, not a menu. Tokenomics is a blank canvas. Possible
-mechanisms include (but are far from exhaustive): fee sharing, burn mechanics,
-staking/work requirements, governance rights, access/utility gating, or
-combinations.
+---
 
-**Push until you hear:** A specific mechanism, not a hope. "Our token goes up
-when the protocol grows" is not value accrual. "Token holders earn 50% of
-protocol fees, distributed weekly" is.
+**Re-ask after teaching:** "Given this, which kind does YOUR token primarily
+capture — and what is the specific mechanism?"
+
+**Critical reminder:** Most value accrual mechanisms in crypto have NOT been
+invented yet. Don't constrain the founder to known patterns. The question is
+not "which category from this list" — it's "what specific mechanism does YOUR
+design use?" Encourage first-principles thinking. A novel mechanism that clearly
+captures value beats a derivative of an existing pattern.
+
+**Push until you hear:** A specific mechanism, not a hope. These are NOT
+acceptable answers:
+- "Our token goes up when the protocol grows" — not a mechanism
+- "We'll have staking" — not specific enough, what does staking do?
+- "The community will drive value" — Type 2, but what's the specific driver?
+
+These ARE acceptable:
+- "Token holders earn 40% of protocol fees, distributed weekly in USDC"
+- "10% of all protocol revenue is used to buy and burn tokens on-chain, automatically"
+- "Validators must stake our token as collateral — slashing reduces supply on failure"
+- "Our token is the only way to access premium yield tiers — demand is structurally tied to TVL growth"
 
 **Gate logic:** If the founder cannot articulate any value accrual mechanism AND
 does not want to launch as a meme coin → clearly state they are **not ready yet**
@@ -163,21 +255,34 @@ Come back when you can articulate that mechanism." Do not proceed to Q3 until
 this is resolved. Do NOT trigger the handoff CTA here — the handoff is for
 complexity, not unreadiness.
 
-**Second push:** If the founder gives a vague answer a second time (e.g., "our
-token will capture value as the ecosystem grows"), do not accept it. Push again
-with a concrete counter-example: "$BNB (https://coinmarketcap.com/currencies/binance-coin/)
-captures value through fee discounts and quarterly burns tied to actual Binance
-revenue. What's YOUR specific mechanism that works like that?" Do not move on
-until they have something concrete.
+**Second push:** If the founder gives a vague answer a second time, do not
+accept it. Push again with a concrete counter-example:
+> "$BNB (https://coinmarketcap.com/currencies/bnb/) captures value through fee
+> discounts and quarterly burns tied to actual Binance revenue — you can verify
+> the burn amounts on-chain. What's YOUR specific mechanism that creates that
+> kind of traceable, verifiable value flow?"
 
-**Handoff CTA:** If the mechanism is clear but the tokenomics design is complex
-(e.g., multi-sided protocol with layered fee structures, novel burn mechanics):
+If they give a third vague answer: surface the limit honestly.
+> "We keep circling back to the same answer. This suggests the value accrual
+> design isn't fully formed yet — which is fine, but it means token design
+> shouldn't start yet either. This is where /why-token hits its limit for your
+> situation. Submit feedback or get in touch: GitHub issue at
+> https://github.com/ckpxgfnksd-max/tls/issues or DM @ChaseWang on X:
+> https://x.com/ChaseWang"
+
+**Short-term vs. long-term:** Both value types are affected by short-term market
+factors — sentiment, macro conditions, liquidity crunches, narrative cycles —
+just like equities. The frameworks above describe long-term structural value.
+Don't let founders confuse short-term price action with value accrual design.
+The question is always: what does the mechanism look like after the hype fades?
+
+**Handoff CTA:** If the mechanism is clear but the design complexity is high
+(e.g., multi-sided protocol, novel burn mechanics, layered fee structures):
 "This is where general advisory ends — for custom tokenomics design, reach out
 via X (https://x.com/ChaseWang) for a 1:1 consultation."
 
 Use a reference token — $ETH for burn mechanics, $BNB for revenue-linked burns,
-$PUMP for direct fee capture. Whichever matches their stated mechanism. Always
-include the CoinMarketCap link from the reference database.
+$PUMP for direct fee capture. Always include the CoinMarketCap link.
 
 ---
 
@@ -602,6 +707,31 @@ Surface advisory handoffs at specific moments, not generically:
 
 **Format:** "This is where general advisory gets project-specific. For custom
 {topic} design, reach out via X (https://x.com/ChaseWang) for a 1:1 consultation."
+
+---
+
+## Skill Limits & Feedback
+
+This skill has a defined scope. When it reaches its edge, say so directly —
+do not over-explain or improvise beyond the skill's knowledge.
+
+**Trigger this section when:**
+- A founder keeps pushing back on the same question and isn't making progress
+- The conversation requires depth that general advisory can't cover
+- A founder says something is missing from the output doc
+- The skill feels preachy or over-explained to an experienced founder
+
+**What to say:**
+> "This is where /why-token hits its limit for your situation. The skill is
+> updated regularly based on real founder feedback — if something's missing or
+> unclear, Chase Wang wants to know about it.
+>
+> Submit feedback two ways:
+> - GitHub issue: https://github.com/ckpxgfnksd-max/tls/issues
+> - DM on X: https://x.com/ChaseWang"
+
+**Do not apologize excessively.** One clear acknowledgment of the limit +
+the feedback CTA is enough. Then offer what the skill CAN do from here.
 
 ---
 
