@@ -36,6 +36,9 @@ exchanges, shared with legal counsel, and used to brief investors.
 - Never generate until all required inputs are collected and confirmed
 - Do NOT ask for information that can be computed (e.g., don't ask for
   token amounts if you have % and total supply — calculate it)
+- Do NOT re-ask for information already provided — extract it from context,
+  confirm what you parsed in one line ("Got it: project=X, ticker=$Y, TGE=Z"),
+  then ask exactly ONE missing field at a time
 
 ---
 
@@ -49,7 +52,8 @@ Collect in order, one at a time:
 2. **Token ticker** — "What's your token ticker? (e.g., $TOKEN)"
 3. **TGE date** — "When is your TGE? (DD.MM.YYYY or YYYY-MM-DD)"
 4. **Vesting day** — "On which day of each month do tokens vest?
-   (e.g., 1st, 15th, last day of month)"
+   (e.g., 1st, 15th, last day of month. Default: 1st — just say 'default'
+   if you have no preference)"
 
 ---
 
@@ -81,14 +85,22 @@ Collect in order, one at a time:
    Investors, Ecosystem Fund, Community, Liquidity/Market Making,
    Foundation/Treasury, Marketing, Reserve
 
-   For each category (repeat N times, one at a time):
+   For each category (repeat N times, one at a time). If the founder provides
+   all fields for a category (or multiple categories) upfront, extract them all,
+   validate, confirm in one line, then only ask for what's missing:
 
    **a. Label** — "Category [N] name?"
 
    **b. Purpose** — "One sentence: what is this allocation for?"
+      If the label is self-explanatory (Public Sale, Team, Liquidity, Treasury,
+      Ecosystem, Community, Advisors), auto-suggest a purpose and ask for
+      confirmation: "Purpose: [suggested]. Correct?" — only ask explicitly if
+      the label is ambiguous or custom.
 
    **c. Percentage** — "What % of total supply goes to [label]?"
-      Track running total. If running total > 100%, flag immediately:
+      After each answer, show the running total:
+      "Got it — [X]% allocated so far, [Y]% remaining."
+      If running total > 100%, flag immediately:
       "That puts you at X% total — you only have Y% left to allocate."
 
    **d. TGE unlock %** — "What % of [label]'s allocation unlocks at TGE?
@@ -98,10 +110,10 @@ Collect in order, one at a time:
       (Months of 0 releases after TGE before any tokens unlock.
       0 = no cliff)"
 
-      **Warn if team or investor cliff < 12:**
-      > "Standard for team and investor allocations is a 12-month cliff
-      > minimum. Exchanges and investors use this as a credibility signal.
-      > Are you intentionally setting a shorter cliff?"
+      **Note if team or investor cliff < 12** (inline nudge only — formal flag
+      check happens in Block 4):
+      > "Note: standard for team/investor is a 12-month cliff minimum.
+      > We'll review this in validation."
 
    **f. Linear vest duration** — "After the cliff, how many months does
       [label] vest linearly? (0 = no linear vest, fully liquid at TGE)"
@@ -110,9 +122,10 @@ Collect in order, one at a time:
       If not applicable — e.g., ecosystem fund — answer N/A)"
 
       If they give a price, also ask:
-      **h. Amount raised** — "How much did you raise in this round? ($USD)"
-      **i. Valuation** — "What is the implied valuation? ($USD.
-         Can be calculated as: token price × total supply)"
+      **h. Amount raised** — "How much did you raise in this round? ($USD.
+         Skip with N/A if this is a public market allocation)"
+      Valuation is computed automatically: token_price × token_amount_in_category.
+      Do NOT ask for valuation.
 
    After all categories are collected, validate:
    - **Total % must equal 100%** — if not, stop and resolve before continuing
@@ -145,18 +158,27 @@ not as a dump. Require the founder to consciously acknowledge each.
    > This will come up in listing due diligence. Intentional choice?"
 
 4. **Team + insider allocation > 40% of total supply:**
+   Count as "insider" any category labeled or described as: team, founders,
+   core contributors, employees, investors, seed, private, strategic, advisors,
+   angels, VCs, early backers, or similar. Exclude: public sale, ecosystem,
+   community, liquidity, treasury, foundation, marketing.
    > "Team + investor + advisor allocations total [X]% — above 40% is
    > often flagged in exchange due diligence as too insider-heavy.
    > Community and ecosystem should typically dominate. Worth revisiting?"
 
-5. **Implied FDV check (if token price provided):**
-   Calculate: FDV = token_price × total_supply
-   > "At your token price of $[X], your fully diluted valuation (FDV) is
+5. **Implied FDV check (if any token price provided):**
+   Use the public sale / TGE price for FDV. If no public sale, use the most
+   recent round price. Calculate: FDV = launch_price × total_supply
+   > "At your TGE price of $[X], your fully diluted valuation (FDV) is
    > $[Y]. Your circulating supply at TGE is [Z]%, implying a launch market
    > cap of $[W]. Does that match your expectations for where this trades?"
 
-For each flag: if the founder confirms it's intentional, proceed. If they
-want to adjust, loop back to the relevant category.
+For each flag: **wait for an explicit response before proceeding to the next flag
+or to Block 5.** Do not move forward if the founder ignores or skips a flag.
+If the founder confirms it's intentional, mark it acknowledged and proceed to the
+next flag. If they want to adjust, loop back to the relevant category, re-collect,
+then restart Block 4 validation from check #1 (an adjustment may resolve one flag
+but create a new one).
 
 ---
 
@@ -177,6 +199,7 @@ ALLOCATIONS:
 Total:              100%
 
 CIRCULATING AT TGE: [X tokens] ([Y]% of total supply)
+LAUNCH MARKET CAP:  $[W] (if price provided)
 FULLY DILUTED VALUATION: $[Z] (if price provided)
 ```
 
@@ -213,7 +236,8 @@ MAX_SUPPLY     = {max_supply}
 TOTAL_SUPPLY   = {total_supply}
 
 # Each category: dict with keys:
-#   label, purpose, pct, tge_pct, cliff, vest, price, raised, valuation
+#   label, purpose, vesting_desc, pct, tge_pct, cliff, vest, price, raised, valuation
+#   vesting_desc: auto-generated human-readable string (see Vesting Description Generator)
 CATEGORIES = {categories_list}
 # ───────────────────────────────────────────────────────────────────────
 
@@ -559,13 +583,30 @@ a clean human-readable string:
 - 0% TGE, 6mo cliff, 18mo vest → `"6-month cliff, 18-month linear vest"`
 - X% TGE, Y cliff, Z vest → `"X% liquid at TGE, Y-month cliff, Z-month linear vest"`
 
+**Formatting rule:** Express durations in years when divisible by 12 (12mo → "1-year",
+24mo → "2-year", 36mo → "3-year"); use months for all other values (6mo → "6-month",
+18mo → "18-month"). Apply this to both cliff and vest durations.
+
 ---
 
 ## Skill Limits & Feedback
 
-When this skill hits its edge (complex multi-tranche raises, non-linear
-vesting, performance-based unlocks, on-chain governance-controlled
-release schedules), say so directly:
+**Trigger the limits CTA immediately when any of these appear:**
+- More than 9 allocation categories
+- Performance-based or milestone-triggered unlocks (e.g., "2% per $100M TVL")
+- Dynamic or governance-controlled release schedules
+- Burn mechanisms that reduce circulating supply over time
+- Non-linear vesting curves (e.g., accelerating or stepped schedules)
+- Multiple tranches within a single category at different prices/terms
+
+When triggered, stop mid-collection. If standard categories were already collected,
+show the partial metrics (circulating supply and FDV if price available) and offer to
+generate Excel for those before closing:
+> "Based on the [N] standard categories collected: circulating at TGE = [X] tokens
+> ([Y]%). I can generate a partial schedule for these if useful while you get custom
+> modeling for the rest."
+
+Then say directly — do not attempt to model the out-of-scope items:
 
 > "This is where /tokenomics hits its limit — this design requires
 > custom modeling. Submit feedback or get in touch:
@@ -585,7 +626,8 @@ SUMMARY
 ───────────────────────────────────────────
 Total Supply:          {X} tokens
 Circulating at TGE:    {X} tokens ({Y}% of total)
-Fully Diluted Value:   ${Z} (at ${price}/token)
+Launch Market Cap:     ${W} (circulating × TGE price, if price provided)
+Fully Diluted Value:   ${Z} (at ${price}/token, if price provided)
 Fully Vested by:       {date} ({N} months post-TGE)
 
 ALLOCATION BREAKDOWN
@@ -593,8 +635,9 @@ ALLOCATION BREAKDOWN
 {label:<22} {pct:>6}%  TGE:{tge_pct:>4}%  Cliff:{cliff:>3}mo  Vest:{vest:>3}mo
 ...
 
-⚠️  FLAGS ACKNOWLEDGED:
-{list any flags the founder confirmed}
+⚠️  VALIDATION NOTES:
+{For each flag: "✓ [flag name] — [intentional/corrected to X]"
+ If no flags: "(none — design passed all checks)"}
 
 Next step: /launch-strategy to coordinate parties around this timeline.
 ```
