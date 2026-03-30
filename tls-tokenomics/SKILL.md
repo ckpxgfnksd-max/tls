@@ -6,7 +6,7 @@ description: |
   token release schedule ready for exchanges, legal counsel, and investors.
   Use when a founder says "tokenomics", "allocation", "vesting schedule",
   "token release", "how do I structure my token supply", or after /why-token.
-version: 1.0.0
+version: 1.0.1
 tags: ["token", "tokenomics", "vesting", "allocation", "excel", "TGE", "schedule"]
 metadata:
   openclaw:
@@ -291,7 +291,11 @@ def fmt_pct(cell):
 
 # ── VESTING CALC ───────────────────────────────────────────────────────
 def calc_schedule(total, tge_pct, cliff, vest, max_months):
-    """Returns list: index 0 = TGE release, 1..N = monthly releases."""
+    """Returns list: index 0 = TGE release, 1..N = monthly releases.
+
+    Cliff = lockup period (zero releases). After cliff ends, linear vest
+    begins over `vest` months. No lump dump at the cliff end.
+    """
     s = [0.0] * (max_months + 1)
     tge_amt = total * tge_pct / 100
     remaining = total - tge_amt
@@ -300,19 +304,16 @@ def calc_schedule(total, tge_pct, cliff, vest, max_months):
     if remaining <= 0 or (cliff == 0 and vest == 0):
         return s  # fully liquid at TGE
 
-    if cliff == 0:
-        monthly = remaining / vest
-        for m in range(1, vest + 1):
-            if m <= max_months:
-                s[m] += monthly
-    else:
-        total_months = cliff + vest
-        rate = remaining / total_months
+    if vest == 0:
+        # No linear vest — release all remaining at cliff end (one-time unlock)
         if cliff <= max_months:
-            s[cliff] += rate * cliff        # accumulated cliff release
+            s[cliff] += remaining
+    else:
+        # Linear vest begins AFTER cliff ends — divide only by vest months
+        monthly = remaining / vest
         for m in range(cliff + 1, cliff + vest + 1):
             if m <= max_months:
-                s[m] += rate
+                s[m] += monthly
 
     return s
 
