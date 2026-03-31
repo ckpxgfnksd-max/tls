@@ -327,29 +327,6 @@
       }
     },
     {
-      "ticker": "$CC",
-      "name": "Canton Network",
-      "chain": "Canton",
-      "category": "value_accrual",
-      "motivation_tags": ["product-embedded", "infrastructure"],
-      "mechanism_tags": ["utility", "enterprise"],
-      "launch_tags": ["enterprise", "institutional"],
-      "summary": "Enterprise-grade blockchain by Digital Asset (DAML creators). Designed for financial institutions — Goldman Sachs, BNP Paribas, and others. Token utility is tied to transaction fees and network participation in a permissioned/semi-permissioned environment.",
-      "lesson": "Enterprise blockchain tokens operate differently — adoption is driven by institutional partnership agreements, not retail speculation. The token thesis requires institutional buy-in before retail.",
-      "cmc_url": "https://coinmarketcap.com/currencies/canton-network/",
-      "project_url": "https://canton.network",
-      "launch_year": 2024,
-      "tokenomics": {
-        "type": "low-confidence",
-        "confidence": "low",
-        "source": "Limited public tokenomics documentation — verify via canton.network official docs",
-        "total_supply": null,
-        "tge_date": null,
-        "note": "Canton Network is built by Digital Asset (B2B enterprise company). Public tokenomics documentation for $CC is not comprehensively available in training data. Any token launch would be enterprise-focused with institutional participants. Verify all fields via official Canton Network or Digital Asset documentation before use.",
-        "categories": []
-      }
-    },
-    {
       "ticker": "$SKY",
       "name": "Sky Protocol",
       "chain": "Ethereum",
