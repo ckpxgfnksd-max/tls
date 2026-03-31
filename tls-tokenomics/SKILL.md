@@ -6,7 +6,7 @@ description: |
   token release schedule with supply/demand simulation chart.
   Use when a founder says "tokenomics", "allocation", "vesting schedule",
   "token release", "how do I structure my token supply", or after /why-token.
-version: 2.0.0
+version: 2.0.20
 tags: ["token", "tokenomics", "vesting", "allocation", "excel", "TGE", "schedule", "chart"]
 metadata:
   openclaw:
@@ -32,6 +32,9 @@ Now design the allocation and vesting that makes it credible.
 
 ## Hard Rules
 
+- **Scan before you speak** — always read the founder's opening message for
+  mode signals (reference token = Mode B), allocation data, demand inputs,
+  and /why-token context before asking any questions. Extract what's there.
 - One question at a time — don't dump a form at the founder
 - Validate as you go — catch errors before generation, not after
 - Warn on red flags — don't silently accept bad vesting designs
@@ -54,7 +57,14 @@ Ask exactly this before anything else:
 >
 > If B: tell me the ticker and I'll load their allocation as your starting point."
 
-Wait for response. Then branch:
+**Auto-detect before asking:** If the founder's opening message already
+mentions a reference token ("similar to X", "like $JUP", "based on Uniswap"),
+skip the mode select question and go directly to Mode B, confirming:
+> "Looks like you want to start from $[X]'s structure — jumping to Mode B."
+Similarly, if they provide a full allocation breakdown in their first message,
+skip to Mode A Block 3 extraction.
+
+Otherwise wait for response. Then branch:
 - **A** → Go to Block 1: Project Basics
 - **B** → Go to Mode B: Historical Reference Loader
 
@@ -66,19 +76,23 @@ Wait for response. Then branch:
    `/Users/chasewang/.claude/skills/why-token/data/reference-tokens.json`
 
 2. Find tokens where `tokenomics.type` is `"structured"` or `"low-confidence"`.
-   Display a numbered list:
+   Display a DYNAMIC numbered list built from the JSON file — do NOT
+   hardcode any token names. Format each entry as:
+   `[N]. $[ticker] — [name] · [chain] · [type label] [[confidence] confidence]`
+   where type label = "structured" → "structured [high confidence]",
+   "low-confidence" → "partial data [low confidence]"
 
    > "Available reference tokens:
-   > 1. $UNI — Uniswap · Ethereum · structured [high confidence]
-   > 2. $BNB — BNB · BNB Chain · structured [high confidence]
-   > 3. $SOL — Solana · Solana · structured [high confidence]
-   > 4. $ETH — Ethereum · Ethereum · structured [high confidence]
-   > 5. $PUMP — Pump.fun · Solana · partial data [low confidence]
-   > 6. $KITE — Kite AI · BSC · partial data [low confidence]
+   > [dynamically generated list]
    >
    > Which token do you want to start from? (number or ticker)"
 
-3. After user selects, load that token's `tokenomics` block. If
+3. If the founder named a token NOT in the JSON file:
+   > "$[X] isn't in my reference library yet. Here are the tokens I have
+   > available — want to pick the closest one, or start from scratch (Mode A)?"
+   Show the dynamic list and wait for response.
+
+   After user selects, load that token's `tokenomics` block. If
    `confidence: "low"`, warn upfront:
    > "⚠️ Note: [TOKEN]'s tokenomics aren't fully documented publicly.
    > The data below includes estimates — treat it as a starting template,
@@ -100,8 +114,11 @@ Wait for response. Then branch:
 
 5. Apply any changes the founder specifies. Re-display the updated table.
    When they confirm, pre-fill all session variables from the loaded data
-   and skip to: **Ask for Project Basics** (name, ticker, TGE date, vest day)
-   then jump to **Block 4: Smart Validation**.
+   and skip to: **Ask for Project Basics** (name, ticker, total supply,
+   TGE date, vest day) — but first extract any of these already provided
+   in the founder's opening message. Only ask for what is missing. Confirm
+   extracted values in one line before proceeding.
+   Then jump to **Block 4: Smart Validation**.
 
 ---
 
@@ -121,7 +138,11 @@ Collect in order, one at a time:
 
 5. **Total supply** — "What is your total token supply?"
 
-6. **Max supply** — "Is your max supply the same as total supply, or does
+6. **Max supply** — Only ask this if the founder's message mentions
+   staking rewards, inflation, minting, or an uncapped supply model.
+   Otherwise default max_supply = total_supply silently and confirm in
+   the Block 6 summary as "Max Supply: [X] (same as total supply)".
+   If needed: "Is your max supply the same as total supply, or does
    your protocol have a hard cap that differs? (Most projects: same number.
    Inflationary protocols: max supply may be uncapped or higher)"
 
@@ -133,6 +154,12 @@ Collect in order, one at a time:
 ---
 
 ### Block 3: Allocation Categories (Mode A)
+
+**Before asking anything:** Scan the founder's message for allocation data
+already provided (category names, percentages, cliffs, vesting periods).
+Extract and confirm in one line: "Got it — I see [N] categories: [list].
+Let me validate these." Then skip directly to those specific fields that
+are missing, rather than re-asking what was already given.
 
 7. **Number of categories** — "How many allocation categories does your
    token have? (Max 9. Typical: 5-8)"
@@ -147,12 +174,20 @@ Collect in order, one at a time:
    **a. Label** — "Category [N] name?"
 
    **b. Purpose** — "One sentence: what is this allocation for?"
-      If self-explanatory, auto-suggest and ask for confirmation.
+      Self-explanatory categories (Team, Community, Investors, Ecosystem,
+      Liquidity, Treasury, Advisors, Public Sale, etc.) — auto-fill the
+      purpose with a standard one-line description and include it in the
+      Block 6 confirm summary without asking. Only ask if the category name
+      is ambiguous or non-standard.
 
    **c. Percentage** — "What % of total supply goes to [label]?"
-      Show running total after each answer.
+      Show running total after each answer. If bulk-extracting from the
+      founder's opening message, show a single total after all categories
+      are extracted rather than one per category.
 
    **d. TGE unlock %** — "What % of [label]'s allocation unlocks at TGE?"
+      (This is a percentage of the category's allocation, not a token count.
+      If founder gives a token count, compute: tge_pct = tokens ÷ category_tokens × 100)
 
    **e. Cliff** — "Is there a cliff period? (Months of 0 releases after TGE.
       0 = no cliff)"
@@ -168,7 +203,10 @@ Collect in order, one at a time:
       N/A if not applicable)"
       Valuation = price × token_amount. Do NOT ask for valuation.
 
-   After all categories: validate total % = 100%.
+   After all categories: silently compute total %. If it equals 100%,
+   proceed without comment. Only raise an issue if total ≠ 100%:
+   > "Your allocations sum to [X]% — need to adjust to reach 100%.
+   > Which category should absorb the difference?"
 
 ---
 
@@ -178,6 +216,14 @@ After categories are collected (both modes), surface red flags one at a time.
 Require explicit acknowledgement before proceeding.
 
 **Red Flag Checks:**
+
+0. **Fully liquid insider (tge_pct=100, cliff=0, vest=0 on any insider category):**
+   This is the most severe flag — check BEFORE the aggregate TGE unlock check.
+   > "Your [label] allocation is fully liquid at TGE — 100% unlocks on day one
+   > with no cliff and no vesting. This is a near-automatic disqualifier for
+   > major exchange listings and signals to investors that insiders can dump
+   > immediately. Is this a mistake or intentional?"
+   Wait for response before continuing.
 
 1. **High TGE unlock (>50% of total supply liquid at TGE):**
    > "Your TGE circulating supply is [X]% of total supply. Heavy early selling
@@ -189,10 +235,14 @@ Require explicit acknowledgement before proceeding.
    > Without committed liquidity at launch, your token will have wide spreads
    > and poor price discovery. Standard is 3-10% for liquidity. Covered another way?"
 
-3. **Team cliff < 12 months:**
-   > "Your team allocation has a [X]-month cliff. Major exchanges (Binance,
-   > OKX, Coinbase) treat a sub-12-month team cliff as a credibility signal.
-   > This will come up in listing due diligence. Intentional choice?"
+3. **Insider cliff < 12 months (team OR investors):**
+   Check ALL insider categories (team, founders, investors, seed, private,
+   strategic, advisors, angels, VCs). Flag any with cliff < 12 months.
+   > "Your [label] allocation has a [X]-month cliff. Major exchanges (Binance,
+   > OKX, Coinbase) treat a sub-12-month cliff on insider allocations as a
+   > credibility red flag — this will come up in listing due diligence.
+   > Intentional choice?"
+   Issue one flag per offending category, wait for response on each.
 
 4. **Team + insider allocation > 40%:**
    Count as "insider": team, founders, core contributors, employees, investors,
@@ -202,12 +252,22 @@ Require explicit acknowledgement before proceeding.
    > flagged in exchange due diligence as too insider-heavy. Worth revisiting?"
 
 5. **Implied FDV check (if any price provided):**
-   FDV = launch_price × total_supply
+   Compute:
+   - FDV = launch_price × total_supply
+   - circ_at_tge = sum of (category_pct × tge_pct) across all categories
+   - launch_mc = launch_price × (circ_at_tge / 100) × total_supply
    > "At your TGE price of $[X], your FDV is $[Y]. Circulating at TGE is [Z]%,
    > implying a launch market cap of $[W]. Does that match your expectations?"
 
 For each flag: wait for response before proceeding. If they want to adjust,
 loop back to relevant category, then restart Block 4 from check #1.
+
+**Cumulative flag tone:** If 3+ flags triggered and all were "intentional",
+add a candid closing note after the last flag:
+> "Just want to flag that this design has [N] significant red flags that
+> will come up in exchange due diligence. You can proceed — just go in
+> with eyes open. Want to revisit any of them before we generate?"
+This is said ONCE, at the end. Do not repeat it per flag.
 
 ---
 
@@ -215,7 +275,12 @@ loop back to relevant category, then restart Block 4 from check #1.
 
 After validation, collect demand-side inputs for the supply/demand chart.
 
-Ask:
+**Auto-detect before asking:** If the founder's message already mentions
+/why-token, revenue figures, buyback %, or burn mechanics, extract those
+values directly without asking the bridge question. Confirm in one line:
+> "Picking up your demand data from /why-token: [summary of extracted values]."
+
+Otherwise ask:
 > "Now for the chart — I'll simulate how your token release schedule
 > interacts with demand-side forces like buybacks and burns.
 >
@@ -256,6 +321,12 @@ DEMAND_SINKS = {
 }
 ```
 
+**Immediately after collecting demand inputs, compute and store:**
+- Monthly buyback qty = (revenue_monthly_usd × buyback_pct/100) ÷ token_price_assumption
+  (set to 0 if token_price_assumption = 0)
+- This computed value must appear in the Block 6 confirm summary as
+  "Monthly buyback qty: ~[N] tokens"
+
 ---
 
 ### Block 6: Confirm & Generate
@@ -278,8 +349,10 @@ LAUNCH MARKET CAP:  $[W] (if price provided)
 FULLY DILUTED VALUATION: $[Z] (if price provided)
 
 DEMAND SIMULATION:
+{If all demand inputs are 0: "(Not modeled — chart shows gross supply only)"}
+{If demand inputs provided:
 Revenue/mo: $[X] | Buyback: [Y]% | Price assumption: $[Z]
-Monthly buyback qty: ~[N] tokens | Fixed burn: [B] tokens/mo
+Monthly buyback qty: ~[N] tokens | Fixed burn: [B] tokens/mo}
 ```
 
 Ask: "Does this look correct? Type 'yes' to generate, or tell me what to change."
@@ -739,9 +812,13 @@ After running, report:
 Auto-generate `vesting_desc` field:
 
 - 100% TGE, no cliff, no vest → `"Fully liquid at TGE"`
+- 0% TGE, no cliff, no vest → `"Permanently locked (never vests)"`
 - 0% TGE, 12mo cliff, 36mo vest → `"1-year cliff, 3-year linear vest"`
 - 25% TGE, 0 cliff, 24mo vest → `"25% liquid at TGE, remainder linear over 2 years"`
 - 0% TGE, 6mo cliff, 18mo vest → `"6-month cliff, 18-month linear vest"`
+- X% TGE, 0 cliff, 0 vest (with remaining% unlocked at TGE) → treat as
+  100% TGE if tge_pct=100, or confirm with founder if 0 < tge_pct < 100
+  and vest=0 (remaining tokens would be permanently locked — ask to clarify)
 
 **Rule:** Express durations in years when divisible by 12; months otherwise.
 
@@ -790,8 +867,10 @@ ALLOCATION BREAKDOWN
 ...
 
 ⚠️  VALIDATION NOTES:
-{For each flag: "✓ [flag name] — [intentional/corrected to X]"
- If no flags: "(none — design passed all checks)"}
+{Populate from Block 4 results. For each flag raised, record:
+ "⚠ [flag name] — founder confirmed intentional" or
+ "✓ [flag name] — corrected to [new value]"
+ If no flags triggered: "(none — design passed all checks)"}
 
 Next step: /launch-strategy to coordinate parties around this timeline.
 ```
