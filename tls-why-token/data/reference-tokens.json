@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Curated reference tokens for /why-token advisory skill. Extended with tokenomics blocks for /tokenomics Mode B. Maintained by Chase Wang.",
     "last_updated": "2026-03-30",
     "maintainer": "https://x.com/ChaseWang",
@@ -268,6 +268,281 @@
           {"name": "Team & Future Employees", "pct": 21.266, "tge_pct": 0, "cliff": 12, "vest": 36},
           {"name": "Investors", "pct": 18.044, "tge_pct": 0, "cliff": 12, "vest": 36},
           {"name": "Advisors", "pct": 0.69, "tge_pct": 0, "cliff": 12, "vest": 36}
+        ]
+      }
+    },
+    {
+      "ticker": "$LINK",
+      "name": "Chainlink",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "infrastructure"],
+      "mechanism_tags": ["oracle-utility", "staking", "fee-capture"],
+      "launch_tags": ["ICO", "long-runway"],
+      "summary": "Oracle network where LINK is staked as collateral by node operators and earns fees from data consumers. Token utility is directly tied to network usage — the more smart contracts need real-world data, the more LINK is required.",
+      "lesson": "Infrastructure tokens work when the product has real enterprise demand. LINK took 5+ years to build the usage base that makes staking economics meaningful.",
+      "cmc_url": "https://coinmarketcap.com/currencies/chainlink/",
+      "project_url": "https://chain.link",
+      "launch_year": 2017,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Chainlink 2017 ICO whitepaper / public tokenomics",
+        "total_supply": 1000000000,
+        "tge_date": "2017-09-19",
+        "note": "1B LINK. 35% sold in ICO (fully liquid at TGE). 35% for node operator incentives released gradually by Chainlink Labs over 4+ years. 30% retained by team/company with 12-month cliff then linear vest. No formal cliff/vest was publicly committed at ICO — estimate based on actual release patterns.",
+        "categories": [
+          {"name": "Public ICO Sale", "pct": 35.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Node Operator Incentives / Ecosystem", "pct": 35.0, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Team / Company Reserve", "pct": 30.0, "tge_pct": 0, "cliff": 12, "vest": 36}
+        ]
+      }
+    },
+    {
+      "ticker": "$HYPE",
+      "name": "Hyperliquid",
+      "chain": "Hyperliquid L1",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "revenue"],
+      "mechanism_tags": ["fee-capture", "buyback", "HLP"],
+      "launch_tags": ["no-VC", "airdrop", "product-first"],
+      "summary": "Perp DEX with a native L1. No VC, no public sale — 100% of token distributed to community and team. Protocol revenue funds the Assistance Fund which buys back and burns HYPE. The purest example of product-revenue-to-token-value linkage among 2024 launches.",
+      "lesson": "No VC is a feature, not a bug, if you have real revenue and real users. Hyperliquid proved you can launch a top-10 token without a single institutional round.",
+      "cmc_url": "https://coinmarketcap.com/currencies/hyperliquid/",
+      "project_url": "https://hyperliquid.xyz",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "medium",
+        "source": "Hyperliquid official docs and community posts around TGE (Nov 2024)",
+        "total_supply": 1000000000,
+        "tge_date": "2024-11-29",
+        "note": "1B HYPE. No VC, no private sale. ~31% genesis airdrop fully liquid at TGE. ~38.88% for future emissions/HLP/Assistance Fund. ~23.8% team with 1yr cliff then vest. Remaining ~6.32% future community distribution. Exact team vest schedule not fully disclosed — estimate based on available information.",
+        "categories": [
+          {"name": "Genesis Airdrop", "pct": 31.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Future Emissions / HLP / Assistance Fund", "pct": 38.88, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Team", "pct": 23.8, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Community / Future Distribution", "pct": 6.32, "tge_pct": 0, "cliff": 6, "vest": 24}
+        ]
+      }
+    },
+    {
+      "ticker": "$CC",
+      "name": "Canton Network",
+      "chain": "Canton",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "infrastructure"],
+      "mechanism_tags": ["utility", "enterprise"],
+      "launch_tags": ["enterprise", "institutional"],
+      "summary": "Enterprise-grade blockchain by Digital Asset (DAML creators). Designed for financial institutions — Goldman Sachs, BNP Paribas, and others. Token utility is tied to transaction fees and network participation in a permissioned/semi-permissioned environment.",
+      "lesson": "Enterprise blockchain tokens operate differently — adoption is driven by institutional partnership agreements, not retail speculation. The token thesis requires institutional buy-in before retail.",
+      "cmc_url": "https://coinmarketcap.com/currencies/canton-network/",
+      "project_url": "https://canton.network",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "low-confidence",
+        "confidence": "low",
+        "source": "Limited public tokenomics documentation — verify via canton.network official docs",
+        "total_supply": null,
+        "tge_date": null,
+        "note": "Canton Network is built by Digital Asset (B2B enterprise company). Public tokenomics documentation for $CC is not comprehensively available in training data. Any token launch would be enterprise-focused with institutional participants. Verify all fields via official Canton Network or Digital Asset documentation before use.",
+        "categories": []
+      }
+    },
+    {
+      "ticker": "$SKY",
+      "name": "Sky Protocol",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "governance"],
+      "mechanism_tags": ["governance", "DSR", "stablecoin-collateral", "revenue-burn"],
+      "launch_tags": ["rebranding", "migration", "governance-token"],
+      "summary": "MakerDAO rebranded to Sky Protocol in 2024. $MKR converted to $SKY at 1:24,000 ratio. Protocol generates revenue from stability fees and DSR (DAI Savings Rate spread), which flows to token holders via burns and buybacks. One of the oldest and most battle-tested DeFi revenue models.",
+      "lesson": "Brand pivots can unlock new communities, but the underlying token economics must evolve simultaneously. Sky's success depends on whether the new incentive structure (SubDAOs, SKY farming) retains the MakerDAO revenue quality.",
+      "cmc_url": "https://coinmarketcap.com/currencies/sky/",
+      "project_url": "https://sky.money",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "medium",
+        "source": "Sky Protocol / MakerDAO rebrand documentation (August 2024)",
+        "total_supply": 10000000000,
+        "tge_date": "2024-08-19",
+        "note": "10B SKY total supply. MKR holders converted at 1:24,000 ratio — converted portion is immediately liquid. Ecosystem/SubDAO farming rewards vest over time via governance. Core contributor allocation has 12-month cliff. Confidence medium: rebrand was recent and full allocation schedules were still publishing.",
+        "categories": [
+          {"name": "MKR Migration / Circulating at TGE", "pct": 55.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Sky Ecosystem / SubDAO Farming Rewards", "pct": 30.0, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Core Contributors / Foundation", "pct": 10.0, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Reserve / Treasury", "pct": 5.0, "tge_pct": 0, "cliff": 6, "vest": 24}
+        ]
+      }
+    },
+    {
+      "ticker": "$AAVE",
+      "name": "Aave",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "revenue"],
+      "mechanism_tags": ["fee-capture", "safety-module", "governance", "staking"],
+      "launch_tags": ["migration", "rebranding", "governance-token"],
+      "summary": "Lending protocol where AAVE is staked in the Safety Module as first-loss capital, earning protocol revenue. Token holders backstop bad debt in exchange for staking rewards — aligning incentives between protocol solvency and token holding.",
+      "lesson": "Safety Module staking is one of the cleanest value accrual designs: token holders get paid to take on protocol risk. It only works if the protocol generates enough revenue to make the risk worth taking.",
+      "cmc_url": "https://coinmarketcap.com/currencies/aave/",
+      "project_url": "https://aave.com",
+      "launch_year": 2020,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Aave Aavenomics proposal and token migration documentation (October 2020)",
+        "total_supply": 16000000,
+        "tge_date": "2020-10-02",
+        "note": "16M AAVE total supply. Migrated from LEND (ETHLend) at 100 LEND = 1 AAVE. 13M (81.25%) available to LEND holders via migration — immediately liquid. 3M (18.75%) to Ecosystem Reserve for governance, Safety Module incentives, and grants — released gradually via governance over ~5 years.",
+        "categories": [
+          {"name": "LEND Migration (existing holders)", "pct": 81.25, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Ecosystem Reserve (Safety Module, grants, development)", "pct": 18.75, "tge_pct": 0, "cliff": 0, "vest": 60}
+        ]
+      }
+    },
+    {
+      "ticker": "$ONDO",
+      "name": "Ondo Finance",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "revenue"],
+      "mechanism_tags": ["RWA-yield", "fee-capture", "governance"],
+      "launch_tags": ["VC-backed", "long-runway", "low-float"],
+      "summary": "RWA (Real World Asset) protocol tokenizing US Treasuries and money market funds on-chain. Protocol earns management fees on AUM. Notable for its extremely low float at TGE (~2% circulating) — investor and team cliff created a 12-month window of artificially suppressed supply.",
+      "lesson": "Low float at TGE is a double-edged sword: price discovery is distorted, but it rewards early community participants handsomely. The cliff date (12 months post-TGE) is when real price discovery begins.",
+      "cmc_url": "https://coinmarketcap.com/currencies/ondo-finance/",
+      "project_url": "https://ondo.finance",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Ondo Finance tokenomics documentation (January 2024 TGE)",
+        "total_supply": 10000000000,
+        "tge_date": "2024-01-18",
+        "note": "10B ONDO. Only ~2% circulating at TGE (protocol rewards + small community allocation). Investor and team unlock cliff is 12 months from TGE (January 2025), then linear vest. Low float intentional — rewards early community participants.",
+        "categories": [
+          {"name": "Community / Ecosystem / Protocol Rewards", "pct": 52.0, "tge_pct": 2.0, "cliff": 0, "vest": 60},
+          {"name": "Investors (Seed + Series A)", "pct": 19.3, "tge_pct": 0, "cliff": 12, "vest": 18},
+          {"name": "Team & Advisors", "pct": 22.0, "tge_pct": 0, "cliff": 12, "vest": 18},
+          {"name": "Protocol Development / Treasury", "pct": 6.7, "tge_pct": 0, "cliff": 6, "vest": 30}
+        ]
+      }
+    },
+    {
+      "ticker": "$ENA",
+      "name": "Ethena",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "revenue"],
+      "mechanism_tags": ["stablecoin-yield", "fee-capture", "sUSDe"],
+      "launch_tags": ["VC-backed", "Binance-launchpool", "airdrop"],
+      "summary": "Synthetic dollar protocol (USDe) backed by delta-neutral crypto positions. Protocol captures funding rates from perpetual positions as yield, shared with sUSDe stakers. ENA captures governance rights and a share of protocol revenue. One of the fastest protocols to reach $1B+ AUM.",
+      "lesson": "Yield-bearing stablecoins create a moat that pure stablecoins can't match — but the yield depends on perpetual funding rates being positive. The token thesis breaks if funding rates go negative for extended periods.",
+      "cmc_url": "https://coinmarketcap.com/currencies/ethena/",
+      "project_url": "https://ethena.fi",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Ethena Labs tokenomics documentation and TGE announcement (April 2024)",
+        "total_supply": 15000000000,
+        "tge_date": "2024-04-02",
+        "note": "15B ENA. ~5% (750M) unlocked at TGE via Season 1 airdrop. Investors and team have 12-month cliff from TGE. Ecosystem development allocation releases over 4 years. Binance Labs and major VCs in investor tranche.",
+        "categories": [
+          {"name": "Ecosystem Development / Incentives", "pct": 25.0, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Community Airdrops (S1 + future)", "pct": 30.0, "tge_pct": 16.67, "cliff": 0, "vest": 36},
+          {"name": "Investors", "pct": 25.0, "tge_pct": 0, "cliff": 12, "vest": 12},
+          {"name": "Core Contributors / Team", "pct": 15.0, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Foundation Reserve", "pct": 5.0, "tge_pct": 0, "cliff": 6, "vest": 24}
+        ]
+      }
+    },
+    {
+      "ticker": "$MORPHO",
+      "name": "Morpho",
+      "chain": "Ethereum",
+      "category": "well_executed_launch",
+      "motivation_tags": ["product-embedded", "governance"],
+      "mechanism_tags": ["lending-optimization", "fee-capture", "governance"],
+      "launch_tags": ["VC-backed", "non-transferable-launch", "product-first"],
+      "summary": "Lending optimization layer on top of Compound and Aave, later evolving into a standalone lending primitive. Token launched non-transferable in October 2024 — transferability enabled later by governance. Protocol earns fees from lending markets it powers.",
+      "lesson": "Launching a non-transferable token kills day-1 speculation but builds genuine stakeholder alignment. It's a credible commitment mechanism — only works if the protocol is strong enough that people want to hold despite illiquidity.",
+      "cmc_url": "https://coinmarketcap.com/currencies/morpho/",
+      "project_url": "https://morpho.org",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "medium",
+        "source": "Morpho Labs tokenomics documentation (October 2024 token launch)",
+        "total_supply": 1000000000,
+        "tge_date": "2024-10-24",
+        "note": "1B MORPHO. Launched non-transferable — transferability enabled by governance vote post-launch. Community/users receive tokens via rewards but can't trade initially. Investors and team have 12-month cliff. Confidence medium due to non-transferable launch making TGE semantics nuanced.",
+        "categories": [
+          {"name": "Community / Users / Ecosystem Rewards", "pct": 51.0, "tge_pct": 10.0, "cliff": 0, "vest": 48},
+          {"name": "Investors (Seed + Series A + B)", "pct": 22.0, "tge_pct": 0, "cliff": 12, "vest": 18},
+          {"name": "Team & Founders", "pct": 20.0, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Treasury / DAO Reserve", "pct": 7.0, "tge_pct": 0, "cliff": 6, "vest": 24}
+        ]
+      }
+    },
+    {
+      "ticker": "$ZRO",
+      "name": "LayerZero",
+      "chain": "Ethereum",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "infrastructure"],
+      "mechanism_tags": ["fee-capture", "cross-chain-utility", "governance"],
+      "launch_tags": ["VC-backed", "airdrop", "proof-of-donation"],
+      "summary": "Omnichain interoperability protocol. ZRO is used to pay messaging fees for cross-chain transactions. Novel anti-sybil airdrop mechanism: users had to donate a small amount of USDC to claim ('proof of donation'). Fee capture grows as cross-chain volume grows.",
+      "lesson": "The proof-of-donation anti-sybil mechanism was controversial but effective. It raised ~$15M for Protocol Guild while filtering out low-conviction farmers. A first-mover design that may become a template.",
+      "cmc_url": "https://coinmarketcap.com/currencies/layerzero/",
+      "project_url": "https://layerzero.network",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "LayerZero tokenomics documentation and TGE details (June 2024)",
+        "total_supply": 1000000000,
+        "tge_date": "2024-06-20",
+        "note": "1B ZRO. ~8.5% distributed via airdrop at TGE (proof-of-donation anti-sybil mechanism). Investors and team have 12-month cliff. LayerZero Foundation reserves large ecosystem fund for future grants and incentives.",
+        "categories": [
+          {"name": "Community Airdrop (Season 1)", "pct": 8.5, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Community / Ecosystem (grants, future incentives)", "pct": 38.5, "tge_pct": 0, "cliff": 0, "vest": 36},
+          {"name": "Investors", "pct": 32.2, "tge_pct": 0, "cliff": 12, "vest": 18},
+          {"name": "Core Contributors / Team", "pct": 20.3, "tge_pct": 0, "cliff": 12, "vest": 24},
+          {"name": "Foundation / Reserve", "pct": 0.5, "tge_pct": 0, "cliff": 6, "vest": 12}
+        ]
+      }
+    },
+    {
+      "ticker": "$JUP",
+      "name": "Jupiter",
+      "chain": "Solana",
+      "category": "value_accrual",
+      "motivation_tags": ["product-embedded", "revenue"],
+      "mechanism_tags": ["fee-capture", "DEX-aggregation", "JLP", "governance"],
+      "launch_tags": ["airdrop", "no-public-sale", "product-first"],
+      "summary": "Largest DEX aggregator on Solana. JLP (Jupiter Liquidity Pool) earns trading fees. Protocol revenue shared with JLP holders and used for ecosystem development. Notable for its 50% team allocation with 2-year hard lockup — one of the most founder-aligned vesting structures in 2024.",
+      "lesson": "A 2-year hard lockup with no early releases is a credibility signal. Jupiter's team put their money where their mouth is — and the market rewarded it. Contrast with projects that vest team tokens monthly from day 1.",
+      "cmc_url": "https://coinmarketcap.com/currencies/jupiter-ag/",
+      "project_url": "https://jup.ag",
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Jupiter (jup.ag) tokenomics and Jupuary airdrop documentation (January 2024)",
+        "total_supply": 10000000000,
+        "tge_date": "2024-01-31",
+        "note": "10B JUP. 40% immediately circulating at TGE: 10% Jupuary airdrop + 10% future airdrops (over time) + 20% initial liquidity. 50% team/core contributors: 2-year hard lockup (no release until Jan 2026), then 2-year linear vest. 10% community/strategic reserve with 6-month cliff.",
+        "categories": [
+          {"name": "Jupuary Airdrop (round 1)", "pct": 10.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Future Airdrops (rounds 2-4)", "pct": 10.0, "tge_pct": 0, "cliff": 0, "vest": 24},
+          {"name": "Initial Liquidity / Circulating", "pct": 20.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Team & Core Contributors", "pct": 50.0, "tge_pct": 0, "cliff": 24, "vest": 24},
+          {"name": "Community / Strategic Reserve", "pct": 10.0, "tge_pct": 0, "cliff": 6, "vest": 30}
         ]
       }
     }
