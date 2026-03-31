@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "version": "1.0.0",
-    "description": "Curated reference tokens for /why-token advisory skill. Maintained by Chase Wang.",
+    "version": "2.0.0",
+    "description": "Curated reference tokens for /why-token advisory skill. Extended with tokenomics blocks for /tokenomics Mode B. Maintained by Chase Wang.",
     "last_updated": "2026-03-30",
     "maintainer": "https://x.com/ChaseWang",
     "source": "https://github.com/ckpxgfnksd-max/tls",
-    "notes": "Update this file via Claude Code by pulling from the GitHub repo. Future: replace with API."
+    "notes": "tokenomics.type: 'fair-launch' = no structured allocation. 'structured' = full vesting data. 'low-confidence' = partial/estimated data only, verify before use."
   },
   "tokens": [
     {
@@ -20,7 +20,16 @@
       "lesson": "Community engagement can sustain a token long-term even without formal value accrual — but it's the exception, not the rule.",
       "cmc_url": "https://coinmarketcap.com/currencies/dogecoin/",
       "project_url": "https://dogecoin.com",
-      "launch_year": 2013
+      "launch_year": 2013,
+      "tokenomics": {
+        "type": "fair-launch",
+        "confidence": "high",
+        "source": "dogecoin.com / original whitepaper",
+        "total_supply": null,
+        "tge_date": "2013-12-08",
+        "note": "Originally capped at 100B DOGE, cap removed Feb 2014. Now ~5.256B DOGE/year inflationary mining. No pre-mine, no ICO, no structured allocation or vesting.",
+        "categories": []
+      }
     },
     {
       "ticker": "$PEPE",
@@ -34,7 +43,16 @@
       "lesson": "Authenticity matters. Being honest about having no utility is more respected than faking it.",
       "cmc_url": "https://coinmarketcap.com/currencies/pepe/",
       "project_url": "https://www.pepe.vip",
-      "launch_year": 2023
+      "launch_year": 2023,
+      "tokenomics": {
+        "type": "fair-launch",
+        "confidence": "high",
+        "source": "pepe.vip / on-chain Ethereum deployment",
+        "total_supply": 420690000000000,
+        "tge_date": "2023-04-17",
+        "note": "420.69T fixed supply. 93.1% sent to Uniswap LP at launch (LP tokens burned). 6.9% retained in multi-sig for CEX listings and bridges — no formal vesting schedule. Fair launch by convention.",
+        "categories": []
+      }
     },
     {
       "ticker": "$FARTCOIN",
@@ -48,7 +66,16 @@
       "lesson": "Launch mechanics execution matters more than the thesis for attention-driven tokens.",
       "cmc_url": "https://coinmarketcap.com/currencies/fartcoin/",
       "project_url": null,
-      "launch_year": 2024
+      "launch_year": 2024,
+      "tokenomics": {
+        "type": "fair-launch",
+        "confidence": "medium",
+        "source": "pump.fun launch / on-chain Solana data",
+        "total_supply": 1000000000,
+        "tge_date": "2024-10-18",
+        "note": "1B fixed supply. Launched via pump.fun bonding curve. Liquidity migrated to Raydium and LP burned at ~$69K market cap. No team allocation, no investor allocation, no vesting schedule.",
+        "categories": []
+      }
     },
     {
       "ticker": "$ETH",
@@ -62,7 +89,20 @@
       "lesson": "Value accrual can be added after launch. ETH launched without a burn mechanism — EIP-1559 came years later when the network had real usage to capture.",
       "cmc_url": "https://coinmarketcap.com/currencies/ethereum/",
       "project_url": "https://ethereum.org",
-      "launch_year": 2015
+      "launch_year": 2015,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Ethereum Foundation 2014 presale blog / genesis block",
+        "total_supply": 72009990,
+        "tge_date": "2015-07-30",
+        "note": "Genesis supply ~72M ETH. No cliff or vesting on any allocation — all unlocked at mainnet launch. ETH is now inflationary (~120M total) but original 2015 genesis was ~72M.",
+        "categories": [
+          {"name": "Public Presale (ICO)", "pct": 83.33, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Ethereum Foundation", "pct": 8.33, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Early Contributors", "pct": 8.33, "tge_pct": 100, "cliff": 0, "vest": 0}
+        ]
+      }
     },
     {
       "ticker": "$BNB",
@@ -76,7 +116,20 @@
       "lesson": "Tying burns to real revenue creates a transparent, verifiable value accrual mechanism. Exchange tokens work when the exchange has real volume.",
       "cmc_url": "https://coinmarketcap.com/currencies/bnb/",
       "project_url": "https://www.bnbchain.org",
-      "launch_year": 2017
+      "launch_year": 2017,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "BNB 2017 whitepaper / Binance ICO announcement",
+        "total_supply": 200000000,
+        "tge_date": "2017-07-08",
+        "note": "200M original supply. Binance burns quarterly toward 100M target. Team tokens locked 1yr post-ICO then linear over next year. ICO investors fully liquid at TGE.",
+        "categories": [
+          {"name": "ICO Investors", "pct": 50.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Angel Investors", "pct": 10.0, "tge_pct": 0, "cliff": 12, "vest": 12},
+          {"name": "Founding Team", "pct": 40.0, "tge_pct": 0, "cliff": 12, "vest": 12}
+        ]
+      }
     },
     {
       "ticker": "$PUMP",
@@ -90,7 +143,20 @@
       "lesson": "The simplest value accrual mechanisms are often the most effective. If users pay fees and the token captures them, the story is easy to tell.",
       "cmc_url": "https://coinmarketcap.com/currencies/pump-fun/",
       "project_url": "https://pump.fun",
-      "launch_year": 2025
+      "launch_year": 2025,
+      "tokenomics": {
+        "type": "low-confidence",
+        "confidence": "low",
+        "source": "pump.fun announcements / partial community reporting",
+        "total_supply": 1000000000,
+        "tge_date": "2025-01-17",
+        "note": "Limited official disclosure. Community airdrop ~20% confirmed. Team/investor allocation and vesting not fully disclosed. Treat categories below as estimates only.",
+        "categories": [
+          {"name": "Community Airdrop", "pct": 20.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Team / Insiders (est.)", "pct": 20.0, "tge_pct": 0, "cliff": 12, "vest": 24},
+          {"name": "Ecosystem / Treasury (est.)", "pct": 60.0, "tge_pct": 0, "cliff": 0, "vest": 48}
+        ]
+      }
     },
     {
       "ticker": "$KITE",
@@ -104,7 +170,23 @@
       "lesson": "Even with a strong product, a sloppy launch can kill momentum. Execution on launch day is its own discipline.",
       "cmc_url": "https://coinmarketcap.com/currencies/kite-ai/",
       "project_url": null,
-      "launch_year": 2025
+      "launch_year": 2025,
+      "tokenomics": {
+        "type": "low-confidence",
+        "confidence": "low",
+        "source": "kiteai.io / limited public documentation",
+        "total_supply": 1000000000,
+        "tge_date": "2025-01-01",
+        "note": "Minimal official tokenomics documentation available. All categories below are estimates and should be verified against official docs before use.",
+        "categories": [
+          {"name": "Public Sale / IDO (est.)", "pct": 15.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Team (est.)", "pct": 15.0, "tge_pct": 0, "cliff": 12, "vest": 24},
+          {"name": "Ecosystem / Rewards (est.)", "pct": 40.0, "tge_pct": 5, "cliff": 0, "vest": 48},
+          {"name": "Liquidity (est.)", "pct": 10.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Investors (est.)", "pct": 10.0, "tge_pct": 0, "cliff": 6, "vest": 18},
+          {"name": "Reserve (est.)", "pct": 10.0, "tge_pct": 0, "cliff": 12, "vest": 36}
+        ]
+      }
     },
     {
       "ticker": "$SOL",
@@ -118,7 +200,24 @@
       "lesson": "Patience pays. Launching when the product is ready — not when the market is hot — builds a stronger foundation.",
       "cmc_url": "https://coinmarketcap.com/currencies/solana/",
       "project_url": "https://solana.com",
-      "launch_year": 2020
+      "launch_year": 2020,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "Solana Foundation disclosure / Messari report 2020",
+        "total_supply": 488630611,
+        "tge_date": "2020-03-24",
+        "note": "Genesis supply ~488.6M SOL (now inflationary via staking rewards; ~590M as of 2024). Starting inflation rate 8%, decreasing 15%/yr toward 1.5% long-run. Seed and Series A rounds completed 2018-2019.",
+        "categories": [
+          {"name": "Seed Round (2018)", "pct": 15.86, "tge_pct": 0, "cliff": 0, "vest": 24},
+          {"name": "Founding Sale (2019)", "pct": 12.63, "tge_pct": 0, "cliff": 0, "vest": 18},
+          {"name": "Team", "pct": 12.50, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Solana Foundation", "pct": 10.46, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Community / Ecosystem", "pct": 38.89, "tge_pct": 33, "cliff": 0, "vest": 24},
+          {"name": "Validator Sale", "pct": 5.07, "tge_pct": 0, "cliff": 0, "vest": 12},
+          {"name": "Strategic / Series A", "pct": 4.59, "tge_pct": 0, "cliff": 0, "vest": 18}
+        ]
+      }
     },
     {
       "ticker": "$TAO",
@@ -132,7 +231,16 @@
       "lesson": "When your token distribution mechanism IS the product (mining = providing AI compute), the token and the product are inseparable.",
       "cmc_url": "https://coinmarketcap.com/currencies/bittensor/",
       "project_url": "https://bittensor.com",
-      "launch_year": 2023
+      "launch_year": 2023,
+      "tokenomics": {
+        "type": "fair-launch",
+        "confidence": "high",
+        "source": "bittensor.org / opentensor.ai",
+        "total_supply": 21000000,
+        "tge_date": "2021-11-02",
+        "note": "21M TAO hard cap (Bitcoin-inspired). No presale, no ICO, no VC allocation, no pre-mine. 100% distributed via proof-of-work style mining to validators and miners. Halving every ~10.5M blocks (~4 years). Opentensor Foundation has no special allocation.",
+        "categories": []
+      }
     },
     {
       "ticker": "$UNI",
@@ -146,7 +254,22 @@
       "lesson": "You don't always need a sale. Rewarding existing users creates instant alignment and massive goodwill.",
       "cmc_url": "https://coinmarketcap.com/currencies/uniswap/",
       "project_url": "https://uniswap.org",
-      "launch_year": 2020
+      "launch_year": 2020,
+      "tokenomics": {
+        "type": "structured",
+        "confidence": "high",
+        "source": "uniswap.org/blog/uni / governance token announcement",
+        "total_supply": 1000000000,
+        "tge_date": "2020-09-17",
+        "note": "1B UNI fixed supply. 4-year vesting for team, investors, advisors with 12-month cliff. Community treasury released gradually via governance over 4 years. Retroactive airdrop of 400 UNI to ~250K historical users was immediately claimable at TGE.",
+        "categories": [
+          {"name": "Community Treasury", "pct": 43.0, "tge_pct": 0, "cliff": 0, "vest": 48},
+          {"name": "Retroactive Airdrop", "pct": 15.0, "tge_pct": 100, "cliff": 0, "vest": 0},
+          {"name": "Team & Future Employees", "pct": 21.266, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Investors", "pct": 18.044, "tge_pct": 0, "cliff": 12, "vest": 36},
+          {"name": "Advisors", "pct": 0.69, "tge_pct": 0, "cliff": 12, "vest": 36}
+        ]
+      }
     }
   ]
 }
