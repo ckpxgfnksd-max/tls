@@ -6,7 +6,7 @@ description: |
   token release schedule ready for exchanges, legal counsel, and investors.
   Use when a founder says "tokenomics", "allocation", "vesting schedule",
   "token release", "how do I structure my token supply", or after /why-token.
-version: 1.0.1
+version: 1.0.2
 tags: ["token", "tokenomics", "vesting", "allocation", "excel", "TGE", "schedule"]
 metadata:
   openclaw:
@@ -284,10 +284,20 @@ def style_label(cell):
     cell.border = BORDER
 
 def fmt_num(cell):
-    cell.number_format = '#,##0;(#,##0);"-"'
+    # Accounting format matching reference (space-padded, no currency)
+    cell.number_format = '" "* #,##0" ";" "* (#,##0);" "* "- "'
 
-def fmt_pct(cell):
-    cell.number_format = '0.0%;(0.0%);"-"'
+def fmt_pct_total(cell):
+    # For Total % column only
+    cell.number_format = '0.00%'
+
+def fmt_price(cell):
+    # USD price with 3 decimal places, accounting style
+    cell.number_format = '"[$$-409]* #,##0.000 ";"[$$-409]* (#,##0.000);"[$$-409]* "-"??.0 "'
+
+def fmt_usd(cell):
+    # USD amounts (raised, valuation) with 2 decimal places
+    cell.number_format = '"[$$-409]* #,##0.00 ";"[$$-409]* (#,##0.00);"[$$-409]* "-"?? "'
 
 # ── VESTING CALC ───────────────────────────────────────────────────────
 def calc_schedule(total, tge_pct, cliff, vest, max_months):
@@ -344,7 +354,7 @@ for cat in CATEGORIES:
 # ── BUILD WORKBOOK ─────────────────────────────────────────────────────
 wb = Workbook()
 ws = wb.active
-ws.title = "Token Allocation Breakdown"
+ws.title = "3-1. Token Allocation Breakdown"
 
 # Column widths (match template)
 ws.column_dimensions["A"].width = 6.5
@@ -447,31 +457,30 @@ for (row, lbl), (field, is_input) in zip(row_labels, cat_fields):
 ws.cell(row=22, column=2, value="Token Amount").font = label_font()
 ws.merge_cells("B22:C22")
 
-# Row 23: Token amounts (calculated from % × total supply)
-ws.cell(row=23, column=2, value="Amount").font = label_font()
+# Row 23: Token amounts — label "Checker" matches reference
+ws.cell(row=23, column=2, value="Checker").font = label_font()
 ws.merge_cells("B23:C23")
 for i, cat in enumerate(CATEGORIES):
-    token_amt = TOTAL_SUPPLY * cat["pct"] / 100
+    token_amt = round(TOTAL_SUPPLY * cat["pct"] / 100)
     c = ws.cell(row=23, column=4+i, value=token_amt)
     style_formula(c)
     fmt_num(c)
-# Total
 tc = ws.cell(row=23, column=4+n_cats,
              value=f"=SUM({cat_cols[0]}23:{cat_cols[-1]}23)")
 style_formula(tc, bold=True)
 fmt_num(tc)
 
-# Row 24: % of Total Supply
+# Row 24: % of Total Supply — stored as whole numbers (20 not 0.20), ref format
 ws.cell(row=24, column=2, value="% of Total Supply").font = label_font()
 ws.merge_cells("B24:C24")
 for i, cat in enumerate(CATEGORIES):
-    c = ws.cell(row=24, column=4+i, value=cat["pct"] / 100)
+    c = ws.cell(row=24, column=4+i, value=cat["pct"])   # 20, not 0.20
     style_input(c)
-    fmt_pct(c)
+    c.number_format = "General"
 tc = ws.cell(row=24, column=4+n_cats,
-             value=f"=SUM({cat_cols[0]}24:{cat_cols[-1]}24)")
+             value=f"=SUM({cat_cols[0]}24:{cat_cols[-1]}24)/100")
 style_formula(tc, bold=True)
-fmt_pct(tc)
+fmt_pct_total(tc)
 
 # Row 25: Token Price
 ws.cell(row=25, column=2, value="Token Price ($)").font = label_font()
@@ -481,7 +490,7 @@ for i, cat in enumerate(CATEGORIES):
     c = ws.cell(row=25, column=4+i, value=price)
     style_input(c, bold=True)
     if isinstance(price, (int, float)):
-        c.number_format = '$#,##0.0000'
+        fmt_price(c)
 
 # Row 26: Amount Raised
 ws.cell(row=26, column=2, value="Amount Raised ($)").font = label_font()
@@ -491,11 +500,11 @@ for i, cat in enumerate(CATEGORIES):
     c = ws.cell(row=26, column=4+i, value=raised if raised else None)
     style_input(c, bold=True)
     if isinstance(raised, (int, float)):
-        c.number_format = '$#,##0'
+        fmt_usd(c)
 tc = ws.cell(row=26, column=4+n_cats,
              value=f"=SUM({cat_cols[0]}26:{cat_cols[-1]}26)")
 style_formula(tc, bold=True)
-tc.number_format = '$#,##0'
+fmt_usd(tc)
 
 # Row 27: Valuation
 ws.cell(row=27, column=2, value="Valuation ($)").font = label_font()
@@ -505,7 +514,7 @@ for i, cat in enumerate(CATEGORIES):
     c = ws.cell(row=27, column=4+i, value=val if val else None)
     style_input(c, bold=True)
     if isinstance(val, (int, float)):
-        c.number_format = '$#,##0'
+        fmt_usd(c)
 
 # Row 29: Vesting Schedule section header
 header_row = 29
@@ -531,28 +540,32 @@ for month_idx in range(max_months + 1):
 
     if month_idx == 0:
         label = "TGE"
-        date_val = TGE_DATE
+        # Formula references TGE metadata cell — stays dynamic if date changes
+        date_formula = "=C15"
     else:
         label = f"{month_idx}M"
-        date_val = month_end_date(TGE_DATE, month_idx)
+        # EOMONTH formula references previous row — matches reference exactly
+        date_formula = f"=EOMONTH(C{row-1},1)"
 
     ws.cell(row=row, column=2, value=label).font = formula_font(bold=True)
-    date_cell = ws.cell(row=row, column=3, value=date_val)
+    date_cell = ws.cell(row=row, column=3, value=date_formula)
     date_cell.number_format = "DD.MM.YYYY"
     style_formula(date_cell)
 
-    row_total = 0
     for i, (cat, sched) in enumerate(zip(CATEGORIES, schedules)):
         release = sched[month_idx] if month_idx < len(sched) else 0
-        c = ws.cell(row=row, column=4+i, value=release if release != 0 else None)
+        c = ws.cell(row=row, column=4+i, value=round(release) if release != 0 else None)
         style_formula(c)
         fmt_num(c)
-        row_total += release
 
-    # Circulating supply = SUM of all releases up to and including this row
+    # Circulating supply: current row releases + previous row circulating (cumulative)
     circ_col = 4 + n_cats
-    circ_cell = ws.cell(row=row, column=circ_col,
-                         value=f"=SUM({cat_cols[0]}{data_start}:{cat_cols[-1]}{row})")
+    circ_col_letter = get_column_letter(circ_col)
+    if month_idx == 0:
+        circ_formula = f"=SUM({cat_cols[0]}{row}:{cat_cols[-1]}{row})"
+    else:
+        circ_formula = f"=SUM({cat_cols[0]}{row}:{cat_cols[-1]}{row})+{circ_col_letter}{row-1}"
+    circ_cell = ws.cell(row=row, column=circ_col, value=circ_formula)
     style_formula(circ_cell, bold=True)
     fmt_num(circ_cell)
 
