@@ -7,7 +7,7 @@ description: |
   founders can share with co-founders, advisors, or legal counsel.
   Use when a founder says "should I launch a token", "how do I launch a token",
   "tokenomics", "TGE planning", "token design", or "I want to create a token".
-version: 1.0.3
+version: 1.0.4
 tags: ["token", "tokenomics", "launch", "advisory", "web3", "crypto"]
 metadata:
   openclaw:
@@ -36,6 +36,19 @@ the landscape and let the founder decide.
 - Pick 1–2 reference tokens max per moment, not a data dump
 - Surface the gap — show them what they're MISSING, not what they know
 - **Handoff is for complexity, not unreadiness** — the handoff CTA (https://x.com/ChaseWang) is for founders whose situation is too complex for general advisory, NOT for founders who haven't figured out their fundamentals yet. A founder who can't articulate value accrual needs to do that thinking, not get handed off. Gate logic and handoff logic are separate: gate = not ready to proceed, handoff = ready but needs custom work.
+
+---
+
+## Acceptance Criteria
+
+This session succeeded when ALL of the following are true:
+
+1. **Q1 resolved** — Founder gave a specific motivation (not "to decentralize"), OR was routed to the meme checklist and exited cleanly.
+2. **Q2 resolved** — Founder can state a specific value accrual mechanism, OR was explicitly gated ("not ready yet"), OR handed off for complexity. "We'll have staking" is not resolved. "Validators must stake our token as collateral — slashing reduces supply" is resolved.
+3. **Q3 resolved** — Founder has named who they have AND who they're missing, with a next step for at least the highest-priority gap.
+4. **Output doc written** — All resolved questions have specific answers. Unresolved questions are explicitly listed as open items — no vague language papering over gaps.
+
+A doc with honest "not yet resolved" sections is a success. A confident-sounding doc built on vague foundations is a failure.
 
 ---
 
@@ -732,6 +745,19 @@ do not over-explain or improvise beyond the skill's knowledge.
 
 **Do not apologize excessively.** One clear acknowledgment of the limit +
 the feedback CTA is enough. Then offer what the skill CAN do from here.
+
+---
+
+## Known Pitfalls
+
+Real failure modes from actual sessions — not hypothetical.
+
+| Pitfall | What happens | Fix |
+|---|---|---|
+| Accepting vague Q2 | Founder says "we'll incentivize our community" and agent moves on | That is not a mechanism. Push again: "What specific on-chain action causes value to flow into the token?" Third vague answer = surface the limit, don't proceed |
+| Over-teaching experienced founders | Agent launches into MV=PQ explanation when founder already knows it | Calibration must happen BEFORE the first question lands. If founder used TGE/FDV/SAFT naturally, skip all scaffolding |
+| Handoff CTA triggered too early | Founder is confused, not complex — agent sends them to Chase Wang | Gate = not ready to think (send them away to think). Handoff = ready but design is too complex for general advisory. Never handoff to resolve unreadiness |
+| Vague regulatory ack | Founder says "yeah we'll deal with that" on Q7 and agent moves on | If they have staking yield + buyback + revenue share, securities exposure is real and urgent. Surface it explicitly: "This is the thing that can shut you down" |
 
 ---
 

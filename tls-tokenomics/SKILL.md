@@ -6,7 +6,7 @@ description: |
   token release schedule with supply/demand simulation chart.
   Use when a founder says "tokenomics", "allocation", "vesting schedule",
   "token release", "how do I structure my token supply", or after /why-token.
-version: 2.0.20
+version: 2.0.21
 tags: ["token", "tokenomics", "vesting", "allocation", "excel", "TGE", "schedule", "chart"]
 metadata:
   openclaw:
@@ -42,6 +42,19 @@ Now design the allocation and vesting that makes it credible.
 - Do NOT ask for information that can be computed
 - Do NOT re-ask for information already provided — extract from context,
   confirm in one line, then ask ONE missing field at a time
+
+---
+
+## Acceptance Criteria
+
+Session succeeded when ALL of the following are true:
+
+1. **All categories collected** — every category has: label, purpose, pct, tge_pct, cliff, vest. Price and raised are optional but filled if provided.
+2. **Percentages sum to 100%** — exactly. Any deviation is surfaced and resolved before proceeding.
+3. **All Block 4 flags addressed** — each red flag either corrected or explicitly acknowledged as intentional. No flag is silently skipped.
+4. **DEMAND_SINKS populated** — either with real values from the session, or explicitly set to 0 with "(Not modeled)" noted in the confirm summary.
+5. **Founder confirmed the Block 6 summary** — typed "yes" or equivalent after reviewing the full summary table.
+6. **Excel generated** — two sheets written to disk: allocation breakdown + chart. Filename printed.
 
 ---
 
@@ -155,58 +168,26 @@ Collect in order, one at a time:
 
 ### Block 3: Allocation Categories (Mode A)
 
-**Before asking anything:** Scan the founder's message for allocation data
-already provided (category names, percentages, cliffs, vesting periods).
-Extract and confirm in one line: "Got it — I see [N] categories: [list].
-Let me validate these." Then skip directly to those specific fields that
-are missing, rather than re-asking what was already given.
+**Goal:** Collect complete allocation data for all categories.
+**Success:** Every category has all required fields. Percentages sum to 100%.
 
-7. **Number of categories** — "How many allocation categories does your
-   token have? (Max 9. Typical: 5-8)"
+**Required fields per category:**
 
-   Common categories for reference (don't suggest unless asked):
-   Public Sale, Private Sale, Seed Round, Strategic Round, Team, Advisors,
-   Investors, Ecosystem Fund, Community, Liquidity/Market Making,
-   Foundation/Treasury, Marketing, Reserve
+| Field | Key | Notes |
+|---|---|---|
+| Label | `label` | Category name |
+| Purpose | `purpose` | Auto-fill for standard names (Team, Community, Investors, Ecosystem, Liquidity, Treasury, Advisors, Public Sale) — only ask if ambiguous |
+| % of total supply | `pct` | Show running total after each answer; if bulk-extracting, show one total at the end |
+| TGE unlock % | `tge_pct` | % of this category's allocation liquid at TGE. If founder gives a token count, compute: tge_pct = tokens ÷ category_tokens × 100 |
+| Cliff (months) | `cliff` | Lockup period with 0 releases. Note if < 12mo for insider categories |
+| Linear vest (months) | `vest` | Release period after cliff ends |
+| Token price (optional) | `price` | $USD. If given, also collect `raised` |
+| Amount raised (optional) | `raised` | $USD. Valuation = price × token_amount — do NOT ask for valuation directly |
 
-   For each category (repeat N times, one at a time):
+**Before asking anything:** Scan the founder's message for allocation data already provided. Extract all of it, confirm in one line: "Got it — [N] categories totalling [X]%. Let me check what's missing." Then ask only for fields that are absent.
 
-   **a. Label** — "Category [N] name?"
-
-   **b. Purpose** — "One sentence: what is this allocation for?"
-      Self-explanatory categories (Team, Community, Investors, Ecosystem,
-      Liquidity, Treasury, Advisors, Public Sale, etc.) — auto-fill the
-      purpose with a standard one-line description and include it in the
-      Block 6 confirm summary without asking. Only ask if the category name
-      is ambiguous or non-standard.
-
-   **c. Percentage** — "What % of total supply goes to [label]?"
-      Show running total after each answer. If bulk-extracting from the
-      founder's opening message, show a single total after all categories
-      are extracted rather than one per category.
-
-   **d. TGE unlock %** — "What % of [label]'s allocation unlocks at TGE?"
-      (This is a percentage of the category's allocation, not a token count.
-      If founder gives a token count, compute: tge_pct = tokens ÷ category_tokens × 100)
-
-   **e. Cliff** — "Is there a cliff period? (Months of 0 releases after TGE.
-      0 = no cliff)"
-      Note if team/investor cliff < 12 months.
-
-   **f. Linear vest duration** — "After the cliff, how many months does
-      [label] vest linearly? (0 = no linear vest)"
-
-   **g. Token price** — "What is the token price for [label]? ($USD.
-      N/A if not applicable)"
-      If price given, also ask:
-   **h. Amount raised** — "How much did you raise in this round? ($USD.
-      N/A if not applicable)"
-      Valuation = price × token_amount. Do NOT ask for valuation.
-
-   After all categories: silently compute total %. If it equals 100%,
-   proceed without comment. Only raise an issue if total ≠ 100%:
-   > "Your allocations sum to [X]% — need to adjust to reach 100%.
-   > Which category should absorb the difference?"
+Max 9 categories. After all categories: silently check total %. Only raise an issue if total ≠ 100%:
+> "Your allocations sum to [X]% — need to adjust to reach 100%. Which category should absorb the difference?"
 
 ---
 
@@ -838,6 +819,19 @@ When triggered:
 > custom modeling. Submit feedback or get in touch:
 > - GitHub: https://github.com/ckpxgfnksd-max/tls/issues
 > - DM: https://x.com/ChaseWang"
+
+---
+
+## Known Pitfalls
+
+Real failure modes from actual sessions — not hypothetical.
+
+| Pitfall | What happens | Fix |
+|---|---|---|
+| Re-asking bulk-provided data | Founder gives all 6 categories in opening message, agent asks category-by-category | Scan before you speak. Extract all, confirm in one line, ask only what's missing |
+| TGE% given as token count | Founder says "200M tokens unlock at TGE" — agent asks for the % anyway | Compute automatically: tge_pct = 200M ÷ category_tokens × 100. Never ask if you can compute |
+| Cliff vesting math | `remaining / (cliff + vest)` with a lump dump at cliff end | Divide by `vest` only. Monthly releases loop from `cliff+1` to `cliff+vest`. Nothing releases AT the cliff — the cliff is the lockup, vest starts after |
+| Mode B not detected | Founder says "like Jupiter" in opening, agent asks A or B? | Scan opening message first. "similar to X", "like $JUP", "based on Uniswap" all = Mode B. Confirm and proceed directly |
 
 ---
 
