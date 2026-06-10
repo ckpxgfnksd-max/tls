@@ -11,39 +11,43 @@
 | 数据 | 来源 | 置信度 |
 |---|---|---|
 | 算法风险标记 + 信号面板 + 硬性上限 | `x-control`(公开仓库,已完整读取 `signals.py` / `queue.py` / `approve.py` / SKILL.md) | **高 — 真实代码** |
-| 身份/人设 | `tls` README(Chase Wang,ex-Binance listing team,审过 1,000+ 项目,2025 年上线 ~100 个 token) | **高 — 本人所写** |
-| KOL 名单 | `x-control/kol_list.example.md`(本人为自己领域写的种子名单) | **中 — 是真实方向,但 `x-control-chase` 私有仓库里的正式 `kol_list.md` 本会话无权访问,未经核对** |
-| 文风规则 | `chase-voice` 私有仓库 **无权访问** | **缺失 — 本文只用 x-control 中已编码的反 AI 味规则作为文风底线** |
+| 身份/人设 | `tls` README(Chase Wang @ChaseWang,ex-Binance listing team,审过 1,000+ 项目,2025 年上线 ~100 个 token)+ `x-control-chase` SKILL.md | **高 — 本人所写** |
+| KOL 名单 | `x-control-chase/kol_list.md` 正式版(经 `chasewang-skills` 镜像的代码搜索提取) | **高 — 真实名单**:精选种子层(权重 0.7–1.0)+ 2026-05-17 自动导入的全量 following(权重 0.5,含中文区账号) |
+| 文风规则 | `chase-voice` 的 SKILL.md + `style_profile.md`(经代码搜索提取核心段落;该 skill 基于全量推文存档做过 20 轮 autoresearch) | **高 — 真实规则**,细节见 §5 |
 | 通用调研结论 1–10 | 用户提供,已验证 | 高 |
 
-⚠️ **访问缺口**:`x-control-chase` 和 `chase-voice` 均为私有仓库,本会话的 GitHub 授权仅覆盖 `tls`。把这两个仓库加入会话授权后,可出 v2 精修版(替换 §2 种子名单、补全 §5 文风层)。
+注:三仓库数据均已拿到。`chase-voice`/`x-control-chase` 经 GitHub 代码搜索通道提取(片段级,非整库通读),关键规则已交叉验证。
 
 ---
 
 ## 1. 身份资产(identity_hints)
 
-从 tls README 提炼的人设,这是别人没有的护城河,**每条高杠杆内容都应露出其一**:
+人设护城河,**每条高杠杆内容都应露出其一**:
 
-- **ex-Binance listing team**(顶级 CEX 上币视角)
 - **审过 1,000+ 项目**(样本量碾压几乎所有 KOL)
 - **2025 年上线 ~100 个 token**(实操而非纸上谈兵)
+- **顶级 CEX 上币团队出身**(交易所视角)
 - **正在 build TLS(Token Launch Stack)**(build in public 素材,公开仓库可链)
+
+⚠️ **硬规则修正(来自 chase-voice 6 条硬规则)**:**发帖内容里不提 Binance**(no Binance 是和"不碰中国政府/官员话题"并列的安全红线)。所以推文里的身份梗用"前顶级交易所上币团队/在交易所审过 1000+ 项目"表述;"ex-Binance"只放 bio/个人站(tls README 本来就公开写了),不进推文正文。
 
 写入 x-control 草稿 frontmatter 的建议值:
 
 ```yaml
-identity_hints: ["ex-Binance listing", "审过1000+项目", "2025年上线~100个token"]
+identity_hints: ["审过1000+项目", "2025年上线~100个token", "前顶级交易所上币团队"]
 ```
 
-> 注意:平台侧排序已由 LLM 做全语言适配,中文身份梗(如"前币安上币团队")**X 算法能正常理解并奖励**。只是 x-control 本地信号面板的 `_IDENTITY_TEASE_PATTERNS` 还是英文正则,中文梗在本地不显示得分——这是工具显示问题,不是策略问题。本地升级方向见 §8。
+`x-control-chase` 的 `topic_tags` 默认值已固化为 **tokenomics / defi / ai-workflow**——这就是 30 天话题分布基线,内容支柱(§4)全部落在这三个标签内,跳出去会吃 topic-fit 低分。
 
-对应调研结论 #8(加密圈身份可信度建设)和 #6(主页转化):bio 必须一句话说清 ——「前币安上币团队 · 审过 1000+ 项目 · 帮 founder 把 token launch 做对」这个量级的表述。
+> 注意:平台侧排序已由 LLM 做全语言适配,中文身份梗(如"前顶级交易所上币团队")**X 算法能正常理解并奖励**。只是 x-control 本地信号面板的 `_IDENTITY_TEASE_PATTERNS` 还是英文正则,中文梗在本地不显示得分——这是工具显示问题,不是策略问题。本地升级方向见 §8。
+
+对应调研结论 #8(加密圈身份可信度建设)和 #6(主页转化):bio 必须一句话说清——「前顶级交易所上币团队 · 审过 1000+ 项目 · 帮 founder 把 token launch 做对」这个量级的表述。(bio 里是否写明 Binance 由你定夺——tls README 已公开写了 ex-Binance,但 chase-voice 硬规则对帖子内容是零容忍,bio 保持一致最稳。)
 
 ---
 
 ## 2. 战略回复目标名单(KOL list)
 
-来自 `x-control/kol_list.example.md`(自述"Seed list reflects a crypto / DeFi / AI niche"),按战略回复的杠杆率重新分层。调研结论 #2 说最佳猎场是**粉丝为你 2–20 倍**的账号(按 5k 粉计 = 1万–10万粉),百万级大V回复区竞争太激烈,只做选择性出击:
+来自 `x-control-chase/kol_list.md` **正式版**。结构是两层:精选种子层(权重 0.7–1.0,与公开模板一致,本人确认过)+ 全量 following 自动导入层(权重 0.5,2026-05-17,**未经筛选**——里面连 NASA、PopBase 都有,只能当候选池不能当目标清单)。按战略回复杠杆率重新分层,调研结论 #2 说最佳猎场是**粉丝为你 2–20 倍**的账号(按 5k 粉计 = 1万–10万粉),百万级大V回复区竞争太激烈,只做选择性出击:
 
 **A 层 — 日常主猎场(发帖 15 分钟内抢前排,每条 2–3 句补洞见/数据)**
 
@@ -70,7 +74,9 @@ identity_hints: ["ex-Binance listing", "审过1000+项目", "2025年上线~100�
 | RuneKek | $SKY |
 | karpathy | ai-builder |
 
-**待办**:用 `x-control-chase/kol_list.md` 的正式版替换此表;并补充 **中文区同领域 1万–10万粉账号**(目前种子名单全是英文区,与"中文为主"的定位存在缺口——中文 KOL 回复区才是中文粉丝的主要来源)。
+**C 层 — 中文区主猎场(新增,从 following 导入层挖出的真实关注)**
+
+正式名单的 following 层里已有中文区加密账号:`daobase_ai`、`awsbclub_cn`、`tmel0211`、`Uncle_Kai_CN` 等。这层是中文粉丝的主要来源,但目前全部躺在 0.5 权重的未筛选池里。**待办**:把 following 层里 1万–10万粉的中文投资/加密账号筛出来,提权到 0.8–1.0 并标 `lang: zh`,作为 Phase 1 的日常主猎场(优先级高于 A 层英文区——中文回复在中文 KOL 评论区的转化远高于在英文区)。
 
 ---
 
@@ -117,7 +123,7 @@ identity_hints: ["ex-Binance listing", "审过1000+项目", "2025年上线~100�
 | repostability | 80–240 字符 + 陈述句断言 + 反共识框架;忌 hedge 词("我觉得可能大概") |
 | reply-worthiness | 结尾开放式提问 / 反共识框架(与 engagement_bait 一线之隔,问真问题不求互动) |
 | dwell-potential | ≥6 条的 thread 最强;单推则多行结构 + ≥2 个具体数字 |
-| profile-click-pull | 正文露出 identity_hints("ex-Binance…") |
+| profile-click-pull | 正文露出 identity_hints("审过1000+项目…",注意 §5.1 硬规则:不提 Binance) |
 | follow-author-reason | 系列标记("Day 3 / 每周复盘 / 3/7")+ 持续价值预告 |
 | topic-fit | topic_tags 与自己 30 天话题分布重叠(别突然跳出领域) |
 
@@ -177,14 +183,55 @@ identity_hints: ["ex-Binance listing", "审过1000+项目", "2025年上线~100�
 
 ---
 
-## 5. 文风层(占位 — 等 chase-voice 接入)
+## 5. 文风层(chase-voice 真实规则,20 轮 autoresearch 提炼自全量推文存档)
 
-`chase-voice` 私有仓库本会话无法读取。当前文风底线 = x-control 已编码的反 AI 味规则(§3.1 `ai_slop_openers` + §3.2 结构性标记)反推:
+### 5.1 六条硬规则(任何情况不破,硬规则 #1 压倒一切包括时效)
 
-- 开头直接进观点/数字,不要铺垫式开场白
-- 单推 ≤2 个破折号、≤4 个 emoji、不用推内编号列表(要列表就发 thread)
-- 断言句优先,砍掉 hedge 词
-- **待 chase-voice 接入后补全**:口癖、句长分布、中英混排习惯、禁用词表、20 轮 autoresearch 出的核心规则
+1. **不编造数据**(lived/qualitative specificity only,永不发明数字)
+2. **不碰中国政府/官员话题**
+3. **不提 Binance**
+4. **超过 2 行的帖子必须有 hook**
+5. **AI 话题的论断必须先对照 landscape-ai-workflow + yage.ai 验证**
+6. **不直接攻击具名个人**(与 §3.1 `callout_named_account` 同源)
+
+### 5.2 语言形态
+
+- **永远中文为主**,没有英文推文路径;英文素材消化成中文帖,不直译
+- **Crypto-native 中英混排是声音本体**:DeFi、harness、real yield、agentic、perps 这类 terms of art 内嵌在中文句子里,**不过度汉化**
+- **禁 `#` hashtag**(2022–24 存档里的 #财富密码 风格已过时,是 Grok slop 筛查的负分项);`$` cashtag($BTC)保留
+- 融资数据格式:`$43M` / `$1B FDV`,日期 `YYYY.MM`,轮次英文内嵌(`Series A`),领投方括注(`a16z 领投`)
+
+### 5.3 去AI味的两半(对齐 X 的 Grok slop_score)
+
+**一半:像真人说话**——口语颗粒(了/的/吧/呢)、软化词(大概率/感觉/好像)、口癖转折(话说回来/仔细想想/毕竟/反正/说到底/难怪/居然)、省略号、网络slang;**招牌动作 = 成语收尾**("刻舟求剑大概率要被打脸了"),比任何干净的总结句都更像 Chase。同时检测翻译腔:抽象名词当主语、「很+形容词+冒号」、物理动词配抽象推理、"结构性"滥用。
+
+**另一半:不是 generic**——每帖至少一个 first-party anchor:亲历的 founder/builder 细节、一个不显然的具名 specific、或带推理的反共识观点。slop 检测打的是"同质化/低成本",不是工具本身。
+
+**最高纯度的去AI味 = 网感**:黑色幽默 + 荒诞 + 自嘲 + meme 素养 + degen 粗口边缘(以存档上限为准)。真正好笑的帖子本身就是 first-party anchor,不需要论点——X 的 banger 筛查直接奖励它。但 meme 必须当下,不冻结;安全线(无歧视语/不点名攻击/不碰官员/不提Binance)永远在上。
+
+**禁用 tells**:不是…而是…、自问自答、铺垫式开场、中英 buzzword、方法论命名、报告腔开头。
+
+### 5.4 八分支决策树(按内容形态选格式)
+
+| 分支 | 形态 | 规则要点 |
+|---|---|---|
+| 1 | 配图说一句 | 一行裸 caption,无收尾无分析 |
+| 2 | 平行对比(A vs B) | 恰好 N 行,无开头无收尾,标签中文为主英文内嵌 |
+| 3 | 利空/利好信号清单 | 每行主语开头、一行一信号,收尾"大家注意风险。"/"标志性的XX" |
+| 4 | 读古文有感 | `观察一,观察二,是个不可能三角,读《X》有感`(逗号不用破折号,引文收尾是签名) |
+| 5 | 政策/监管长分析 | 定位动词开场("比较值得注意的是"),保留实体名 |
+| 6 | 项目/TGE/launch 公告 | 单段中文,融资格式见 §5.2,一句中文 punchline 收尾 |
+| 7 | **快讯观察**(对具体事件的反应) | 事实先行、2–4 短段、数字/入口/身份/动作密集、干冷后果收尾;先跑四问(第一问:这件事里最反常识的事实是什么?);breaking 子模式需 ≥2 独立信源 |
+| 8 | 多点感想 | "讲几点感想:"+ 编号(有排序)或 dash(无排序),每点 ≤25 字,平收 |
+
+开场三式:受 X 启发… / 第一行直接放最挑衅的论点再展开 / 个人下场("我自己也踩过这个坑…")。
+
+### 5.5 与增长策略的咬合点
+
+- 分支 7(快讯观察)+ breaking 子模式 = 调研 #5 时效内容的执行规范;**速度永远不压倒硬规则 #1**
+- 分支 3(风险清单)= 调研 #4 最稳选题的格式落地
+- 成语 punchline + 网感 = repostability 信号(§3.5)的中文版实现路径
+- style_profile 自述:first-party 锚点的力度**留给 x-auto-loop 按真实表现数据校准**——正好对上 §8 的 feedback loop 设计
 
 ---
 
@@ -218,12 +265,12 @@ identity_hints: ["ex-Binance listing", "审过1000+项目", "2025年上线~100�
 1. **🔴 风险评审升级为 LLM 层(最高优先级)**:平台侧已用 LLM 做全语言语义排序,本地却还在用英文正则镜像旧算法——中文内容在本地面板全部不触发,但在平台侧照常被识别/惩罚,即"X 看得见的风险,工具看不见"。修法不是补中文正则,而是对齐平台:发帖前由 LLM(x-auto-loop 本来就在跑 Claude)按 §3.1/3.2 的**风险类别**做语义评审,语言无关;现有正则降级为零成本预筛。信号面板(§3.5)同理升级。
 2. **🔴 回复上限参数化 + feedback loop 自动调节**:`HARD_CAP_REPLIES_24H = 2` 改为可配置参数 `reply_quota_daily`,并按周度反馈自动调整:回复命中率(KOL 本人回应率)≥10% 且负反馈为 0 → 上调配额;命中率走低或出现 mute/block → 下调。同时区分两类回复(被动回 mention vs. 主动战略回复)各自配额,KOL 名单内目标走战略配额。Phase 1 起步值建议 15–20/天,由 weekly_review 数据驱动收敛。
 3. **🟡 repostability 长度阈值英文偏置**:80–240 字符的"可引用长度"按英文校准;中文信息密度约 2 倍,等效区间约 40–120 字,需要按 CJK 字符占比动态调整。
-4. **🟡 kol_list 缺中文区目标**:种子名单全英文区,Phase 1 主猎场需要补 1万–10万粉的中文投资/加密账号,并加 `lang` 列。
-5. **🟢 接入 chase-voice 作为发帖前的文风 lint 层**(目前只有反 AI 味底线,没有"像 Chase"的正向校验)。
+4. **🟡 kol_list following 层提纯**:0.5 权重的全量 following 导入(连 NASA/PopBase 都在)对 monitor 是噪音。从中筛出中文区 1万–10万粉投资/加密账号(`daobase_ai`/`awsbclub_cn`/`tmel0211`/`Uncle_Kai_CN` 起步),提权 + 标 `lang: zh`,其余降噪。
+5. **🟢 first-party anchor 力度校准回路**:style_profile.md 自述"anchor 推多硬,留待 x-auto-loop 按真实 X 表现数据调"——把每帖的 anchor 类型(亲历/具名 specific/反共识/网感)记进 tracker 的 `experiment_label`,周复盘按曝光/互动归因,自动回写校准值。这与 #2 的 reply_quota 同属一个 feedback loop 框架。
 6. **🟢 把 §7 健康度指标(尤其回复命中率、OON 陷阱数)纳入 weekly_review 自动产出**。
 
 ---
 
 ## 9. 一句话版本
 
-**用「审过 1000+ 项目的前币安上币人」这个无法复制的身份,在中文加密/投资 KOL 的评论区做高密度、带数据的战略回复打开曝光;原创严守 3 单推/天 + 周更 thread 系列;所有内容过 x-control 风险门;到 5k 粉切换 thread 主火力;全程盯净增长和负反馈,不碰任何互动钓鱼。**
+**用「在顶级交易所审过 1000+ 项目」这个无法复制的身份,以 chase-voice 的中文口语+成语 punchline+网感写作,在中文加密/投资 KOL 的评论区做高密度、带数据的战略回复打开曝光;原创严守 3 单推/天 + 周更 thread 系列;所有内容过 x-control 风险门和 6 条硬规则(不编数据、不提币安、不碰官员、不点名攻击);到 5k 粉切换 thread 主火力;全程盯净增长和负反馈,不碰任何互动钓鱼。**
