@@ -136,7 +136,7 @@ identity_hints: ["审过1000+项目", "2025年上线~100个token", "前顶级交
 精力分配 **70% 战略回复 / 30% 原创**(调研 #2)。
 
 **每日动作:**
-- 早 6:00–8:00:跑 `x-control` pulse → 扫 §2 A 层名单过去 12h 新帖 → 选 3–5 条,15 分钟窗口内回复(2–3 句:补数据 / 补 1000+ 项目样本里的反例 / 提犀利问题)。**严禁 "Great post" 类空话。**
+- 早 6:00–8:00:跑 `x-control` pulse → 扫 §2 C/A 层名单过去 12h 新帖 → 选 3–5 条,15 分钟窗口内回复(2–3 句:补数据 / 补 1000+ 项目样本里的反例 / 提犀利问题)。**严禁 "Great post" 类空话。**(注意:这一步无法自动化——Typefully 被 X 政策禁止发回复,见 §8——是每天必须本人到场的动作)
 - 午 12:00–13:00:1 条原创单推(中文,带数字,带身份梗)。
 - 晚 20:00–22:00:1 条原创 + 回复每一条自己帖子下的评论(调研 #1:作者回复≈点赞 150 倍权重,这是免费杠杆,一条都别漏)。
 - 单推全天 ≤3 条,间隔 ≥4h(刚好对齐三个中文活跃时段,自然规避 burst 警告)。
@@ -260,14 +260,37 @@ identity_hints: ["审过1000+项目", "2025年上线~100个token", "前顶级交
 
 ---
 
-## 8. X-auto-loop 改进清单(基于本次代码审读的发现)
+## 8. X-auto-loop 能力核对 + 修订后的改进清单
 
-1. **🔴 风险评审升级为 LLM 层(最高优先级)**:平台侧已用 LLM 做全语言语义排序,本地却还在用英文正则镜像旧算法——中文内容在本地面板全部不触发,但在平台侧照常被识别/惩罚,即"X 看得见的风险,工具看不见"。修法不是补中文正则,而是对齐平台:发帖前由 LLM(x-auto-loop 本来就在跑 Claude)按 §3.1/3.2 的**风险类别**做语义评审,语言无关;现有正则降级为零成本预筛。信号面板(§3.5)同理升级。
-2. **🔴 回复上限参数化 + feedback loop 自动调节**:`HARD_CAP_REPLIES_24H = 2` 改为可配置参数 `reply_quota_daily`,并按周度反馈自动调整:回复命中率(KOL 本人回应率)≥10% 且负反馈为 0 → 上调配额;命中率走低或出现 mute/block → 下调。同时区分两类回复(被动回 mention vs. 主动战略回复)各自配额,KOL 名单内目标走战略配额。Phase 1 起步值建议 15–20/天,由 weekly_review 数据驱动收敛。
-3. **🟡 repostability 长度阈值英文偏置**:80–240 字符的"可引用长度"按英文校准;中文信息密度约 2 倍,等效区间约 40–120 字,需要按 CJK 字符占比动态调整。
-4. **🟡 kol_list following 层提纯**:0.5 权重的全量 following 导入(连 NASA/PopBase 都在)对 monitor 是噪音。从中筛出中文区 1万–10万粉投资/加密账号(`daobase_ai`/`awsbclub_cn`/`tmel0211`/`Uncle_Kai_CN` 起步),提权 + 标 `lang: zh`,其余降噪。
-5. **🟢 first-party anchor 力度校准回路**:style_profile.md 自述"anchor 推多硬,留待 x-auto-loop 按真实 X 表现数据调"——把每帖的 anchor 类型(亲历/具名 specific/反共识/网感)记进 tracker 的 `experiment_label`,周复盘按曝光/互动归因,自动回写校准值。这与 #2 的 reply_quota 同属一个 feedback loop 框架。
-6. **🟢 把 §7 健康度指标(尤其回复命中率、OON 陷阱数)纳入 weekly_review 自动产出**。
+> 2026-06-10 对 `X-auto-loop` 仓库逐项核对后的版本。先说结论:**这个 loop 比 §8 v2 假设的先进得多**——LLM 安全筛查、贝叶斯 bandit 学习回路、维度限定的 directive 闭环验证(`verify_prior`,apply 锚定的不相交队列)、结构性 dunk 杀开关都已在线。原清单 6 项里:2 项已基本建成、1 项失效、1 项被 X 政策封死要换地方做、2 项保留且框架就绪。
+
+### 现有架构(核对所得)
+
+radar 选题(last30days / kol / trending / marquee / convergence 多源,x-control-chase 作为 system 加载)→ chase-voice 起草(codex CLI,ollama 兜底)→ `guard.py` 正则守门 + **pre-publish LLM safety screen**(管判断型规则:编造数据/未验证 AI 论断/人身攻击)+ `judge.py`(substance/format/overall)→ 人工 pick → Typefully 发布(链接自动剥离到回复位,chase-voice Rule 7 已自动化)→ 2 天 impression 锁定 → **日度 postmortem**(top/bottom 20% voice 范例)+ **周度 analyst**(bandit 选臂 → 有界自动 directive → 下周验证,Chase 审计周报)。
+
+### 逐项判定
+
+| 原清单 | 判定 | 现状与动作 |
+|---|---|---|
+| #1 LLM 风险评审层 | **已基本建成** | guard.py(含 Binance + listing-desk 第一人称叙事拦截,2026-06-08 真实事故后加固)+ safety LLM screen + judge 三层已在线。剩余缺口:把 §3.1 的加密负反馈类别(engagement_bait / shill / price_target / dm_solicitation / callout)显式并入 safety screen 的检查单——一次 prompt 级小改 |
+| #2 回复配额 feedback loop | **loop 做不了,移到 x-control** | Typefully **无法发布回复**(X 政策,GROWTH_ENGINE_PLAN 风险表里文档化的限制"no auto-reply actuator")。战略回复只能走 x-control(官方 API 可写)或手动。动作:参数化 `HARD_CAP_REPLIES_24H`→`reply_quota_daily` 改在 **x-control**,命中率从官方 API 的 mentions 读;X-auto-loop 不动 |
+| #3 CJK 长度阈值 | **对 loop 失效,降级** | loop 的 judge 是 LLM,语言原生,没有这个问题。只剩 x-control 审批 UI 的显示层小修,优先级降到最低 |
+| #4 kol_list 提纯 | **保留,双重收益** | 该文件同时喂 x-control monitor 和 loop 的 `kol` topic source,提纯一次两边受益。动作不变(中文区账号提权 + `lang: zh`,NASA/PopBase 类降噪),改在 x-control-chase 仓库 |
+| #5 anchor 校准回路 | **框架全就绪,最高 ROI** | bandit 维度已有 hook_type / structure / length_bucket / cluster / job / archetype / lane / voice_variant / timing,新维度有 shadow→live 上线模式(archetype/lane 的 forab 集成就是先例)。缺口仅是 **anchor_type 不在维度列表**。动作:起草时打 anchor_type 标签(亲历/具名 specific/反共识/网感),注册为 bandit 维度,走 shadow gate 上线 |
+| #6 健康度指标入周报 | **大部分已有** | 周度 analyst 报告(Chase 审计)、follower snapshots、**结构性 dunk 杀开关**(replies+quotes 高/likes 低的比例检测 = §3.4 OON 陷阱的自动化版,且零 prompt-injection 面)、dead-man ping 都在线。缺口:mute/block 在 Typefully 读不到(已用 dunk 比例兜底);回复命中率依赖 #2 在 x-control 侧落地 |
+
+### 修订后的行动清单(按优先级)
+
+1. **anchor_type 进 bandit**(原 #5):唯一"框架就绪、只差接线"的高 ROI 项,照 archetype/lane 的 shadow 先例做。
+2. **x-control 侧:reply_quota_daily 参数化**(原 #2 移址):战略回复是 Phase 1 的 70%,但它在自动化栈里只有 x-control 这一条腿——配额、命中率统计、周度调节全做在那边。
+3. **safety screen 检查单扩容**(原 #1 收尾):并入 x-control 风险类别,顺手把 §5.1 六条硬规则和它对齐成同一份清单。
+4. **kol_list 提纯**(原 #4):一次改动,monitor 和 radar 双收益。
+5. deconstruct.py(emotion-first 角度生成,Nora 挖矿成果)还在 shadow——攒够样本后评估转 live,对应调研 #4"逆向/争议观点"选题的自动化供给。
+
+### ⚠️ 对策略本体的反作用修正
+
+- **Phase 1 的 70% 战略回复是人肉动作**:自动回路只覆盖原创那 30%(选题→起草→审→发→学习)。每天早间的 KOL 评论区突击没有自动化兜底,必须进你本人的日程;x-control 只能做"找目标 + 审文案 + 官方 API 代发"的半自动。
+- **身份梗措辞必须先过 guard.py**:2026-06-08 事故后,第一人称"上币桌/台/listing desk"叙事被高精度拦截(泛指的"$X 在 OKX 上线"不拦)。`identity_hints` 里 **"审过1000+项目"最安全**;"前顶级交易所上币团队"接近被拦的身份叙事边缘,启用前先拿 guard.py 跑一遍。
 
 ---
 
