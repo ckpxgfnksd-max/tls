@@ -294,6 +294,68 @@ radar 选题(last30days / kol / trending / marquee / convergence 多源,x-contro
 
 ---
 
-## 9. 一句话版本
+## 9. 浏览器扩展路线:取数源 + 回复执行器 + UI(逆向 Xhunt / frontrun 所得)
 
-**用「在顶级交易所审过 1000+ 项目」这个无法复制的身份,以 chase-voice 的中文口语+成语 punchline+网感写作,在中文加密/投资 KOL 的评论区做高密度、带数据的战略回复打开曝光;原创严守 3 单推/天 + 周更 thread 系列;所有内容过 x-control 风险门和 6 条硬规则(不编数据、不提币安、不碰官员、不点名攻击);到 5k 粉切换 thread 主火力;全程盯净增长和负反馈,不碰任何互动钓鱼。**
+> 解决三个连在一起的问题:① 战略回复不想用官方 API;② 加进 loop 后 UI 怎么办、要不要重开发;③ funny voice 怎么用。结论:**走浏览器扩展(content script)路线,三个问题一次解决,且不新开发 UI。**
+
+### 9.1 Xhunt / frontrun 到底怎么取 X 数据(2026-06 逆向)
+
+两者都**不用官方 X API**,机制是同一个:**在你已登录的 x.com 页面里注入 content script,在 `world:MAIN` 里 monkey-patch `fetch` / `XMLHttpRequest` / `WebSocket`,劫持 X 自己的内部 GraphQL 接口响应**。
+
+- **frontrun**(逆向评价"干净得多"):钩了 **12 个 X GraphQL 端点**(feed / followers / following / search / tweet-detail 等)+ 在 8 个交易平台 patch fetch/XHR/WebSocket;远端用 GrowthBook 做 feature flag,服务端就能改行为、不过 Chrome 商店审核。
+- **Xhunt**(逆向评价"shady"):同样的注入机制,但越界——把真实 IP / 城市 / ISP / FingerprintJS 设备指纹 / 你在 Twitter 访问的每个 URL 发到 `kb.xhunt.ai`;用 RC4 + `String.fromCharCode` 混淆 `authorization` / `x-user-id` 等头部躲审计;background 里有**无 URL 校验的开放 HTTP 代理**(能让浏览器去抓任意地址含内网/云 metadata);还有已接好 `world:MAIN` 的空钱包注入函数;远端配置跑在阿里 Nacos。两者都没在偷私钥/掏钱包,但都有"服务端静默推改 + 激进权限"的隐患。
+
+**对我们的意义**:取数那一半正是 x-control 现在做的事(bird-search 走 /last30days cookies),只是 frontrun 把它从"服务端重放 cookie"升级成"页面内实时劫持 GraphQL"——**零额外鉴权、无官方 API 速率限**、还能拿到 WebSocket 实时流(发帖瞬间触发,正好喂调研 #2 的"15 分钟抢前排")。
+
+### 9.2 这条路线同时解决"回复"和"UI"
+
+**关键洞察:扩展的 UI 就是 X.com 本身。** 不需要新开发界面,也不需要把你塞进一个新后台。
+
+- **读**:content script 劫持 GraphQL,实时拿到 §2 名单 KOL 的新帖——取代官方 API 和 Typefully 分析。
+- **写(回复)**:同一个登录态会话里,扩展驱动 X 原生 compose 框发回复——**绕开官方 API、也绕开 Typefully 的"禁止发回复"限制**(这正是你们已退役的 Patchright/Chrome-ext actuator 干过的事,不是新territory)。
+- **审批 UI**:回复草稿**内联浮层注入在 X 时间线里**——你在哪读 KOL 帖,就在哪看到 chase-voice 起好的 2–3 句草稿,native compose 框里 **y / 编辑 / 跳过**。你本来就在刷 X,不用切到任何新界面。
+
+**所以回答你的 UI 问题**:不用重新开发。两条都不增 UI——
+1. 现有的 `dashboard.py` 手机审批台(`/api/status` + `_run_control_action` 控制动作 + 刷新回首页)继续管原创那条线;
+2. 回复走扩展内联浮层,UI = X 原生界面。
+loop 不"吞掉"你的界面,它分两条腿:原创 = 手机 dashboard 半自动;回复 = X 页面内扩展半自动。
+
+### 9.3 安全红线(逆向给的教训,自己做扩展时反向规避)
+
+学 frontrun 的干净 GraphQL 钩子,**坚决不学 Xhunt**:不做设备指纹外传、background HTTP 代理必须白名单校验 URL、不混淆头部、不预置任何钱包注入面、远端 flag 要可审计。这本身就符合你整套体系"透明度=护城河"(调研 #4)和 killswitch"零注入面"的哲学。
+
+### 9.4 风险与现实(诚实标注)
+
+- X 对自动化操作登录态会话有反滥用检测;**写侧(自动发回复)比读侧风险高得多**,频率要保守(对齐 §3.3 的回复配额),宁可半自动人工点发,不要无人值守连发——加密圈自动回复是 spam/封号重灾区(调研 #8)。
+- content script 劫持 GraphQL 会随 X 前端改版而碎,要维护。
+- 这是**自建私有扩展自用**,不上架、不收集他人数据,合规面比 Xhunt/frontrun 这种公开分发产品干净。
+
+### 9.5 落地顺序(更新 §8 的回复线)
+
+把 §8 行动清单第 2 项"x-control 官方 API 发回复"**替换**为扩展路线:
+1. 先做**只读** content script:劫持 GraphQL 抓 KOL 新帖 + WebSocket 实时流 → 喂回复驾驶舱(低风险,先验证取数)
+2. 回复**起草**:chase-voice / chase-funny-voice 双 skill 起草(见 §10)
+3. 最后做**写侧**:X 原生 compose 内联审批 + 人工点发(高风险,放最后,永远保留人工 gate)
+
+---
+
+## 10. 输出 skill:chase-voice + chase-funny-voice 双声道
+
+确认存在**两个**输出声音 skill,且 **funny 版已接入 loop**(`voice.py` 导入 `load_chase_funny_voice`;`posts.voice_variant` 列取值 `chase-voice`/`chase-funny-voice`;drafter 按 topic 加权抛硬币选声音;有 `voice.funny.live` / `voice.funny.breaking` kv 开关)。
+
+> 注:`chase-funny-voice/SKILL.md` 自述"Local fork — NOT wired into the autonomous loop",但 X-auto-loop 代码已实际接入——**文档过时**,以代码为准(应修正 SKILL.md 那句话)。
+
+| skill | 何时用 | 安全底线 |
+|---|---|---|
+| **chase-voice** | 严肃拆解 / 纯政策 reframe / 干冷复盘——开玩笑会稀释的场合 | 6 条硬规则 + 去AI味 base |
+| **chase-funny-voice**(fork from chase-voice 1.9.0) | 默认 texture 更幽默;原版输出"太生硬(太stiff)"时 | **完全继承同一套** 6 硬规则 + 安全底线,只是网感/喜剧 register 升为默认 + 加一道 humor-first 构造 pass。新增"喜剧装置库"(三翻四抖/callback-topper/over-literal 荒诞逻辑/尺度碰撞/over-specific 荒诞设定,源自相声)× CT 增长装置,每个标注服务哪种互动 + 风险,带 rotation 意识(单一格式重复本身就是 slop tell);edge 上限 = Chase 存档上限,不越界 |
+
+### 双声道接回回复驾驶舱(§9.2)
+
+回复起草时**按目标推文的 register 选声音**:对方在严肃讲机制/政策 → chase-voice 补数据洞见;对方在玩梗/反讽/轻松 → chase-funny-voice 用一句网感接住(真正好笑的回复本身就是 first-party anchor,且 X 的 banger 筛查直接奖励——见 §5.3)。这正好复用 loop 里已有的 `voice_variant` 加权选择机制,扩展到 reply archetype 即可,无需新造轮子。
+
+---
+
+## 11. 一句话版本
+
+**用「在顶级交易所审过 1000+ 项目」这个无法复制的身份,以 chase-voice / chase-funny-voice 双声道写作,在中文加密/投资 KOL 的评论区做高密度、带数据的战略回复打开曝光;回复走自建浏览器扩展(劫持 X GraphQL 取数 + X 原生 compose 发出,绕开官方 API,UI 内联在 X 页面不重开发);原创严守 3 单推/天 + 周更 thread 系列,过 x-control 风险门和 6 条硬规则;到 5k 粉切换 thread 主火力;全程盯净增长和负反馈,不碰任何互动钓鱼,自建扩展坚决不学 Xhunt 的指纹外传与开放代理。**
