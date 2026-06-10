@@ -79,6 +79,11 @@ CR_X_SOURCE_ID 改 x_live)。只读、不外传、失败即跳过,刻意避开 X
 - radar 已有 `frontrun_trending` 源,adapter 是 `inbox`,读
   `$XDG_CACHE_HOME/convergence-radar/inbox/` 下的 JSON。
 - inbox JSON schema:`{source, domain, items:[{url,title,body,published_at}]}`。
+  x_live 默认还多写 item 级 `engagement`/`author` + 顶层 `fetched_at`;若 adapter
+  严格校验 key,设 `CR_X_RICH_ITEMS=0` 只发 4 个 canonical key(step 1a 核实)。
+- 已加 `tests/test_x_live.py`:不依赖 Playwright/登录态,喂合成 GraphQL payload
+  走 `_walk → _trending → _write_inbox`,断言 inbox JSON 两种 shape 都对。6 个用例
+  本 session 已跑通(`python tests/test_x_live.py`)。落进 radar 时放到其 tests/ 下。
 - radar 的 "never fully fail" 契约:任何源出错只 log + skip,不能炸整个 cycle。
 - sync 链路参照 chase-voice 的 `.github/workflows/sync-to-monorepo.yml`:
   push canonical → 镜像进 chasewang-skills → Studio skillsync cron 拉取。

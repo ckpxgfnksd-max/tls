@@ -79,7 +79,22 @@ cross-source spread (recommended — see `social.yaml.patch`).
 | `CR_X_OWN_HANDLE` | `ChaseWang` | own tweets are skipped |
 | `CR_X_MAX_TWEETS` | `300` | capture cap per run |
 | `CR_X_TOP_N` | `50` | how many trending items to emit |
+| `CR_X_RICH_ITEMS` | `1` | `0` emits only the 4 canonical inbox keys; default also adds `engagement`/`author`. Set `0` if the inbox adapter rejects unknown keys (see "Schema check" below). |
 | `CR_X_HEADLESS` | `1` | `0` to watch it run |
+
+## Schema check (do this once when wiring in)
+
+The inbox JSON's canonical item schema is `{url, title, body, published_at}`.
+By default x_live also writes `engagement` and `author` per item, plus a
+top-level `fetched_at`. That's harmless **if** the inbox adapter ignores
+unknown keys (most do). Before relying on it, confirm against the actual
+adapter: if it validates keys strictly and would reject extras, set
+`CR_X_RICH_ITEMS=0` and it emits only the 4 canonical keys. `tests/test_x_live.py`
+covers both shapes and runs with no Playwright/X session needed:
+
+```bash
+python tests/test_x_live.py     # or: pytest tests/test_x_live.py
+```
 
 ## Maintenance note
 

@@ -39,6 +39,9 @@ CONFIG (env)
   CR_X_QUERIES       comma-separated search terms to surface beyond the home
                      feed (default: a crypto/macro set)
   CR_X_MAX_TWEETS    capture cap per run (default: 300)
+  CR_X_RICH_ITEMS    "0" to emit only the 4 canonical inbox keys; default "1"
+                     also adds engagement/author (turn off if the inbox adapter
+                     rejects unknown keys — confirm once, then set)
   CR_X_HEADLESS      "0" to watch it run for debugging (default: "1")
 
 This file is dependency-light: Playwright only. If Playwright or a logged-in
@@ -208,6 +211,24 @@ def _inbox_dir() -> Path:
     return Path(cache) / "convergence-radar" / "inbox"
 
 
+def _inbox_item(it: _Item, rich: bool) -> dict:
+    """One inbox item. The radar's documented schema is the 4 canonical keys
+    {url,title,body,published_at}. We additionally emit engagement/author when
+    rich items are enabled — useful if the adapter stashes a raw_json blob, but
+    OFF-able via CR_X_RICH_ITEMS=0 in case the adapter validates keys strictly.
+    Confirm the adapter's tolerance once (step 1a) and set the env accordingly."""
+    item = {
+        "url": it.url,
+        "title": it.title,
+        "body": it.body,
+        "published_at": it.published_at,
+    }
+    if rich:
+        item["engagement"] = _engagement(it)
+        item["author"] = it.author
+    return item
+
+
 def _write_inbox(items: list[_Item], source: str = "frontrun_trending") -> Path:
     """Write the exact shape the radar's inbox adapter already parses:
     {source, domain, items:[{url,title,body,published_at}]}. We reuse the
@@ -215,22 +236,12 @@ def _write_inbox(items: list[_Item], source: str = "frontrun_trending") -> Path:
     needed — this just removes the human from that source."""
     inbox = _inbox_dir()
     inbox.mkdir(parents=True, exist_ok=True)
+    rich = os.environ.get("CR_X_RICH_ITEMS", "1") != "0"
     payload = {
         "source": source,
         "domain": "social",
         "fetched_at": _iso(None),
-        "items": [
-            {
-                "url": it.url,
-                "title": it.title,
-                "body": it.body,
-                "published_at": it.published_at,
-                # extra fields are ignored by the adapter but useful in raw_json
-                "engagement": _engagement(it),
-                "author": it.author,
-            }
-            for it in items
-        ],
+        "items": [_inbox_item(it, rich) for it in items],
     }
     dest = inbox / f"x_live_{int(time.time())}.json"
     dest.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -247,7 +258,10 @@ def _profile_dir() -> Path:
 
 def _queries() -> list[str]:
     raw = os.environ.get("CR_X_QUERIES")
-    return [q.strip() for q in raw.split(",")] if raw else list(_DEFAULT_QUERIES)
+    if not raw:
+        return list(_DEFAULT_QUERIES)
+    # drop empties so a trailing comma / blank term doesn't trigger a junk search
+    return [q.strip() for q in raw.split(",") if q.strip()]
 
 
 def fetch_x_live() -> dict:
