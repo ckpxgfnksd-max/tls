@@ -1,0 +1,14 @@
+# OPTIONAL: give x_live its own source row so it counts as a distinct source in
+# the radar's cross-source spread (≥3 distinct sources gate). Append under the
+# existing `sources:` list in convergence-radar/sources/social.yaml.
+#
+# If you skip this, x_live still works — it writes under the existing
+# `frontrun_trending` id and the tested inbox adapter ingests it unchanged.
+
+  - id: x_live
+    name: X live (auto GraphQL capture, frontrun-style)
+    adapter: inbox          # reuses the tested inbox adapter; x_live.py writes the file
+    domain: social
+    # x_live.py emits source:"x_live" when CR_X_SOURCE_ID=x_live is set;
+    # otherwise it writes under frontrun_trending. Pick one to avoid
+    # double-counting the same tweets as two sources.
