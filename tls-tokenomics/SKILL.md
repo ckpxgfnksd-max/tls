@@ -85,8 +85,14 @@ Otherwise wait for response. Then branch:
 
 ### Mode B: Historical Reference Loader
 
-1. Use the Read tool to load:
-   `/Users/chasewang/.claude/skills/why-token/data/reference-tokens.json`
+1. Use the Read tool to load the reference token database from the local
+   installation. Do not use user-specific absolute paths. Try these locations
+   in order, relative to this skill's own directory, and use the first file
+   that exists:
+   - `../why-token/data/reference-tokens.json` (installed skill, per README)
+   - `../tls-why-token/data/reference-tokens.json` (installed under repo names)
+   - `tls-why-token/data/reference-tokens.json` (running from a repo checkout)
+   - `data/reference-tokens.json` (bundled directly with this skill)
 
 2. Find tokens where `tokenomics.type` is `"structured"` or `"low-confidence"`.
    Display a DYNAMIC numbered list built from the JSON file — do NOT
